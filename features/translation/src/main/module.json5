@@ -1,0 +1,9 @@
+{
+  "module": {
+    "name": "translation",
+    "type": "har",
+    "deviceTypes": [
+      "default"
+    ]
+  }
+}

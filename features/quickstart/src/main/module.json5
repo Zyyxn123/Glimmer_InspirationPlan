@@ -1,0 +1,10 @@
+{
+  "module": {
+    "routerMap": "$profile:route_map",
+    "name": "quickstart",
+    "type": "har",
+    "deviceTypes": [
+      "default"
+    ]
+  }
+}

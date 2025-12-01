@@ -1,0 +1,58 @@
+import { SpeechToSpeech } from "../HTTP/HTTPForTranslation";
+import { hilog } from "@kit.PerformanceAnalysisKit";
+import { MainFuc } from "../View/MainFuc";
+import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
+import { ChangeLanguage } from "../View/ChangeLanguage";
+import classifyViewModel from "../ViewModel/ClassifyListViewModel";
+import ClassifyAlphaListModel from "../Model/ClassifyAlphaListModel";
+import { JSON } from "@kit.ArkTS";
+
+
+@Component
+export struct Translation {
+
+
+  build() {
+    Column({ space: 10 }) {
+      ChangeLanguage()
+
+      MainFuc()
+
+      Text('历史记录')
+        .width('100%')
+        .fontSize(15)
+        .fontColor('#ff999999')
+        .textAlign(TextAlign.Center)
+
+      // 历史记录
+      List({ space: 5 }) {
+        ForEach(Array.from({ length: 25 }), () => {
+          ListItem() {
+            Row() {
+            }
+            .width('90%')
+            .height(40)
+            // .backgroundColor(Color.Pink)
+          }
+          .border({ width: { bottom: 1}, color: '#000'})
+        })
+      }
+      .padding({ top: 10})
+      .width('100%')
+      .alignListItem(ListItemAlign.Center)
+      .backgroundColor(Color.White)
+      .border({ width: 1, radius: { topLeft: 15, topRight: 15 }, color: Color.White })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Center)
+    .backgroundColor(ComponentsColor.AZURITE_BRIGHT_7TH)
+    .linearGradient({
+      direction: GradientDirection.Right,
+      colors: [
+        [ComponentsColor.AZURITE_BRIGHT_7TH, 0],
+        [ComponentsColor.ROUGE_BRIGHT_7TH, 1]]
+    })
+  }
+}
