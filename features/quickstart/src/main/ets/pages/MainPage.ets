@@ -108,6 +108,7 @@ export struct MainPage {
             }
             .tabBar(this.innerTabsBuilder(1, '单词', ComponentsPictures.ICON_TABS_WORD))
           }
+
           // .padding({ bottom: 20})
           .linearGradient({
             direction: GradientDirection.Right,
