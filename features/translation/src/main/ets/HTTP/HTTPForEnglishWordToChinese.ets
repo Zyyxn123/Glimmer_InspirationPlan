@@ -9,7 +9,7 @@ const POETRY_URL: string = 'https://v2.xxapi.cn/api/englishwords'
 
 @ObservedV2
 export class HTTPForEnglishWordToChinese {
-  @Trace myData: HTTPForEnglishWordToChineseType | undefined = undefined
+  @Trace static  myData: HTTPForEnglishWordToChineseType | undefined = undefined
 
   static HTTPForEnglishWordToChinese(word: string) {
     let httpRequest = http.createHttp();
@@ -29,6 +29,7 @@ export class HTTPForEnglishWordToChinese {
         // data.result为HTTP响应内容，可根据业务需要进行解析。
         // hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(data.result))
         let tran: HTTPForEnglishWordToChineseType = JSON.parse(data.result.toString()) as HTTPForEnglishWordToChineseType
+        HTTPForEnglishWordToChinese.myData = tran
 
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.code))
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.msg))
@@ -52,7 +53,7 @@ export class HTTPForEnglishWordToChinese {
   }
 }
 
-interface HTTPForEnglishWordToChineseType {
+export interface HTTPForEnglishWordToChineseType {
   code: string
   data: dataType
   msg: string
