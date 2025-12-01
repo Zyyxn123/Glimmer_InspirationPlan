@@ -1,11 +1,13 @@
 import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
+import { HTTPForEnglishWordToChinese } from '../HTTP/HTTPForEnglishWordToChinese'
 import { HTTPForRandomPoetry } from '../HTTP/HTTPForRandomPoetry'
-import { SpeechToSpeech } from '../HTTP/HTTPForTranslation'
+// import { SpeechToSpeech } from '../HTTP/HTTPForTranslation'
 
 @Component
 export struct MainFuc {
   @State WordOrSentence: string = ''
-
+  @Prop lanFrom: string
+  @Prop lanTo: string
 
   build() {
     Row() {
@@ -17,15 +19,21 @@ export struct MainFuc {
         .width('85%')
         .height(65)
         .margin({ left: 10, top: 5 })
-        .onClick(() => {
-          // HTTPForRandomPoetry.httpRequestForPoetry()
-        })
 
       Row() {
         Image(ComponentsPictures.ICON_SEARCH_FANGFAJING)
           .height(25)
           .width(25)
           .fillColor('#ff808080')
+          .onClick(() => {
+            if (this.lanFrom == 'en' && this.WordOrSentence) {
+              HTTPForEnglishWordToChinese.HTTPForEnglishWordToChinese(this.WordOrSentence)
+            } else {
+              this.getUIContext().showAlertDialog({
+                message: '无输入或输入不合理'
+              })
+            }
+          })
       }
       .height(40)
       .width(50)

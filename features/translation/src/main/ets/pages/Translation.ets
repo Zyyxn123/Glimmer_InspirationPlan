@@ -1,4 +1,4 @@
-import { SpeechToSpeech } from "../HTTP/HTTPForTranslation";
+// import { SpeechToSpeech } from "../HTTP/HTTPForTranslation";
 import { hilog } from "@kit.PerformanceAnalysisKit";
 import { MainFuc } from "../View/MainFuc";
 import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
@@ -7,16 +7,22 @@ import classifyViewModel from "../ViewModel/ClassifyListViewModel";
 import ClassifyAlphaListModel from "../Model/ClassifyAlphaListModel";
 import { JSON } from "@kit.ArkTS";
 
-
 @Component
 export struct Translation {
+  @State lanFrom: string = 'ch-Hans'
+  @State lanTo: string = 'en'
+
+
+  aboutToAppear(): void {
+
+  }
 
 
   build() {
     Column({ space: 10 }) {
-      ChangeLanguage()
+      ChangeLanguage({ lanFrom: this.lanFrom, lanTo: this.lanTo})
 
-      MainFuc()
+      MainFuc({ lanFrom: this.lanFrom, lanTo: this.lanTo})
 
       Text('历史记录')
         .width('100%')
