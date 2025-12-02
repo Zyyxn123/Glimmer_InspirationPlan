@@ -537,7 +537,7 @@ export struct MainFuc {
 
               // else if () {}
             }
-          })
+          })//
           .bindSheet($$this.isShownTranslation, this.TranslationDialog, {
             height: this.isOneWord ? SheetSize.LARGE : SheetSize.MEDIUM,
             blurStyle: BlurStyle.Thin,
