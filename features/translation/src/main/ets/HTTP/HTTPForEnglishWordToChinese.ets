@@ -12,6 +12,7 @@ export class HTTPForEnglishWordToChinese {
   @Trace static  myData: HTTPForEnglishWordToChineseType | undefined = undefined
 
   static HTTPForEnglishWordToChinese(word: string) {
+    hilog.info(0x0000, '[publicTranslationTag]', 'aaa:' + word)
     let httpRequest = http.createHttp();
     httpRequest.on('headersReceive', (header) => {
       console.info('header: ' + JSON.stringify(header));
@@ -41,6 +42,7 @@ export class HTTPForEnglishWordToChinese {
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.sentences)) // 例句
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.phrases)) // 短语
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.relWords)) // 同根词
+        hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.ukspeech))
 
         httpRequest.destroy();
       } else {
@@ -73,37 +75,37 @@ interface dataType {
   word: string
 }
 
-interface translationsType {
+export interface translationsType {
   pos: string
   tran_cn: string
 }
 
-interface synonymsType {
+export interface synonymsType {
   Hwds: HwdsTypeAnother[]
   pos: string
   tran: string
 }
 
-interface HwdsTypeAnother {
+export interface HwdsTypeAnother {
   word: string
 }
 
-interface sentencesType {
+export interface sentencesType {
   s_cn: string
   s_content: string
 }
 
-interface phrasesType {
+export interface phrasesType {
   p_cn: string
   p_content: string
 }
 
-interface relWordsType {
+export interface relWordsType {
   Hwds: HwdsType[]
   Pos: string
 }
 
-interface HwdsType {
+export interface HwdsType {
   hwd: string
   tran: string
 }

@@ -1,6 +1,6 @@
 import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { window } from '@kit.ArkUI';
+import { display, window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 
 const DOMAIN = 0x0000;
@@ -30,6 +30,12 @@ export default class EntryAbility extends UIAbility {
       }
       hilog.info(DOMAIN, 'testTag', 'Succeeded in loading the content.');
     });
+
+    let displayClass: display.Display | null = null;
+    displayClass = display.getDefaultDisplaySync();
+    console.log("当前屏幕密度:", displayClass.densityDPI);
+    console.log("当前屏幕密度:", displayClass.densityPixels);
+    console.log("当前屏幕密度:", displayClass.scaledDensity);
 
 
     let windowClass: window.Window = windowStage.getMainWindowSync();
