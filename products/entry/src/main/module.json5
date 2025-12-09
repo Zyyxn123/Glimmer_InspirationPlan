@@ -3,7 +3,20 @@
     "requestPermissions": [
       {
         "name": "ohos.permission.INTERNET"
+      },
+      // [StartExclude permissions_acc]
+      {
+        "name": "ohos.permission.CAMERA",
+        "reason": "$string:permission_CAMERA",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ]
+        }
+      },      {
+        "name": "ohos.permission.ACCELEROMETER" // 加速度传感器权限
       }
+      // [EndExclude permissions]
     ],
     "name": "entry",
     "type": "entry",

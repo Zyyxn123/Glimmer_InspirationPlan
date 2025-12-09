@@ -67,6 +67,14 @@
     {
       "name": "utils",
       "srcPath": "./commons/utils",
+    },
+    {
+      "name": "camera",
+      "srcPath": "./commons/camera",
+    },
+    {
+      "name": "takephoto",
+      "srcPath": "./features/takephoto",
     }
   ]
 }

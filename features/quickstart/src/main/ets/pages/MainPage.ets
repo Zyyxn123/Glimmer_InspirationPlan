@@ -10,6 +10,7 @@ import {
 } from '@kit.UIDesignKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { Translation } from 'translation'
+import { Index } from 'takephoto'
 
 @Builder
 export function MainPageBuilder() {
@@ -100,13 +101,13 @@ export struct MainPage {
             }
             .tabBar(this.innerTabsBuilder(0, '翻译', ComponentsPictures.ICON_TABS_TRANSLATION))
 
-            TabContent() {
-              Button('return')
-                .onClick(() => {
-                  AppStorage.set('LoginState', false)
-                })
-            }
-            .tabBar(this.innerTabsBuilder(1, '单词', ComponentsPictures.ICON_TABS_WORD))
+            // TabContent() {
+            //   Button('return')
+            //     .onClick(() => {
+            //       AppStorage.set('LoginState', false)
+            //     })
+            // }
+            // .tabBar(this.innerTabsBuilder(1, '单词', ComponentsPictures.ICON_TABS_WORD))
           }
           // .padding({ bottom: 20})
           .linearGradient({
@@ -135,6 +136,7 @@ export struct MainPage {
         .tabBar(this.myTabsBar(ComponentsPictures.ICON_TABS_MAIN, '首页', 0))
 
         TabContent() {
+          Index()
         }
         .tabBar(bleedIconStyle(() => {
           this.tabBuilder(1)
