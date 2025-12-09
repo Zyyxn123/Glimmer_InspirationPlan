@@ -18,6 +18,7 @@ import hilog from '@ohos.hilog'
 
 @Component
 export struct MainFuc {
+  @State maxLine: number = 2
   @State WordOrSentence: string = ''
   @State isShownTranslation: boolean = false
   @State msg: HTTPForEnglishWordToChineseType | undefined = undefined
@@ -79,7 +80,7 @@ export struct MainFuc {
 
             // if (this.isOneWord) {
             // 音标
-            Row({ space: 10 }) {
+            Column({ space: 10 }) {
               Row() {
                 Text('英/\'' + HTTPForEnglishWordToChinese.myData.data.ukphone)
 
@@ -103,6 +104,7 @@ export struct MainFuc {
               .backgroundColor(ComponentsColor.AZURITE_BRIGHT_3RD)
             }
             .width('90%')
+            .alignItems(HorizontalAlign.Start)
 
             List({ space: 20 }) {
               // 翻译
@@ -271,7 +273,7 @@ export struct MainFuc {
 
               ListItem() {
               }
-              .height(180)
+              .height(250)
               .width('100%')
             }
             .scrollBar(BarState.Off)
@@ -322,51 +324,65 @@ export struct MainFuc {
       else if (this.Index == 1) {
         if (HTTPForZhToEn.myData_tran &&
           HTTPForZhToEn.currText == this.WordOrSentence) {
-          Column({ space: 20 }) {
-            // 标头
-            Row() {
-              Text('翻译内容')
-                .fontSize(25)
-                .fontColor(ComponentsColor.AZURITE_DARK_6TH)
-                .fontWeight(900)
+            Scroll() {
+              Column({ space: 20 }) {
+                // 标头
+                Row() {
+                  Text('翻译内容')
+                    .fontSize(25)
+                    .fontColor(ComponentsColor.AZURITE_DARK_6TH)
+                    .fontWeight(900)
 
-              Button('关闭')
-                .borderRadius(10)
-                .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)
-                .fontColor(ComponentsColor.AZURITE_DARK_2ND)
-                .padding(8)
-                .onClick(() => {
-                  this.isShownTranslation = false
-                })
+                  Button('关闭')
+                    .borderRadius(10)
+                    .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)
+                    .fontColor(ComponentsColor.AZURITE_DARK_2ND)
+                    .padding(8)
+                    .onClick(() => {
+                      this.isShownTranslation = false
+                    })
+                }
+                .justifyContent(FlexAlign.SpaceBetween)
+                .width('90%')
+                .margin({ left: 40, right: 40, top: 20 })
+
+                // 文本
+                Text(HTTPForZhToEn.currText)
+                  .maxLines(this.maxLine)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis})
+                  .width('90%')
+                  .padding({ bottom: 5 })
+                  .fontSize(20)
+                  .fontWeight(600)
+                  .border({
+                    width: { bottom: 1 },
+                    radius: { bottomLeft: 10, bottomRight: 10 },
+                    color: ComponentsColor.AZURITE_DARK_2ND
+                  })
+                  .onClick(() => {
+                    this.maxLine = this.maxLine == 2 ? -1 : 2
+                  })
+
+                // 翻译
+                Text(HTTPForZhToEn.myData_tran)
+                  .width('90%')
+                  .padding({ bottom: 5 })
+                  .fontSize(22)
+
+                Column() {}
+                .width('100%')
+                .height(800)
+              }
+              .width('100%')
+              .height('100%')
             }
-            .justifyContent(FlexAlign.SpaceBetween)
-            .width('90%')
-            .margin({ left: 40, right: 40, top: 20 })
-
-            // 文本
-            Text(HTTPForZhToEn.currText)
-              .width('90%')
-              .padding({ bottom: 5 })
-              .fontSize(30)
-              .fontWeight(600)
-              .border({
-                width: { bottom: 1 },
-                radius: { bottomLeft: 10, bottomRight: 10 },
-                color: ComponentsColor.AZURITE_DARK_2ND
-              })
-
-            // 翻译
-            Text(HTTPForZhToEn.myData_tran)
-              .width('90%')
-              .padding({ bottom: 5 })
-              .fontSize(30)
-          }
-          .width('100%')
-          .height('100%')
-          .linearGradient({
-            direction: GradientDirection.Right,
-            colors: [[ComponentsColor.AZURITE_BRIGHT_5TH, 0], [ComponentsColor.AZURITE_BRIGHT_7TH, 1]]
-          })
+            .linearGradient({
+              direction: GradientDirection.Right,
+              colors: [[ComponentsColor.AZURITE_BRIGHT_5TH, 0], [ComponentsColor.AZURITE_BRIGHT_7TH, 1]]
+            })
+            .edgeEffect(EdgeEffect.Spring, {
+              alwaysEnabled: true
+            })
         } else {
           Column() {
             Row() {
@@ -449,7 +465,7 @@ export struct MainFuc {
         .fontWeight(500)
         .fontColor('#000')
         .backgroundColor(Color.Transparent)
-        .width('85%')
+        .width('76%')
         .height(65)
         .margin({ left: 10, top: 5 })
 
@@ -539,7 +555,7 @@ export struct MainFuc {
             }
           })//
           .bindSheet($$this.isShownTranslation, this.TranslationDialog, {
-            height: this.isOneWord ? SheetSize.LARGE : SheetSize.MEDIUM,
+            height: SheetSize.LARGE,
             blurStyle: BlurStyle.Thin,
             borderWidth: { top: 2, right: 3, left: 3 },
             borderColor: ComponentsColor.AZURITE_DARK_1ST,
@@ -554,6 +570,16 @@ export struct MainFuc {
               clearInterval(this.intervalId_three)
               this.intervalId_three = null
             }
+          })
+          .margin({ right: 8})
+
+        Image(ComponentsPictures.ICON_TRANSLATION_DELETE)
+          .height(23)
+          .width(23)
+          .fillColor('#cc808080')
+          .margin({ right: 6})
+          .onClick(() => {
+            this.WordOrSentence = ''
           })
       }
       .height(40)

@@ -19,6 +19,9 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import { AVRecorderState, CameraManager, PhotoManager, VideoManager } from 'camera';
 import PreviewViewModel from '../viewmodels/PreviewViewModel';
 import { Logger } from 'utils';
+import { hilog } from '@kit.PerformanceAnalysisKit';
+import { photoAccessHelper } from '@kit.MediaLibraryKit';
+import { fileIo } from '@kit.CoreFileKit';
 
 const TAG = 'OperateButtonsView';
 
@@ -30,6 +33,12 @@ const TAG = 'OperateButtonsView';
 // ⭐ 操作状态与按钮样式随状态变化更新
 @Component
 struct OperateButtonsView {
+  @Link lanFrom: string
+  @Link lanTo: string
+  private imageSource: image.ImageSource | undefined = undefined;
+  @State chooseImages: PixelMap | undefined = undefined;
+  @State dataValues: string = '';
+  @Consume('pathStack') pathInfos: NavPathStack;
   // isDelayTakePhoto	Link	是否正在倒计时拍照
   // previewVM	Link	预览层 ViewModel，管理摄像头方向等
   // cameraManager	Require	负责开启/重启摄像头 session
@@ -41,6 +50,7 @@ struct OperateButtonsView {
   // thumbnailUrl	State	缩略图实际的保存地址
   // syncButtonSettings	Require	切换状态后同步 UI，例如切换摄像头
   // captureClickFlag	StorageLink	全局存储的拍照次数计数（用于外部监听）
+  @State isShownPhotoTakeMsgSheet: boolean = false
   @Link isDelayTakePhoto: boolean;
   @Link previewVM: PreviewViewModel;
   @Require cameraManager: CameraManager;
@@ -56,6 +66,7 @@ struct OperateButtonsView {
   private setThumbnail: (pixelMap: image.PixelMap, url: string) => void = (pixelMap: image.PixelMap, url: string) => {
     this.thumbnail = pixelMap
     this.thumbnailUrl = url
+    // this.isShownPhotoTakeMsgSheet = true;
   }
   @StorageLink('captureClick') captureClickFlag: number = 0;
 
@@ -69,47 +80,123 @@ struct OperateButtonsView {
     this.videoManager.setVideoCallback(this.setThumbnail);
   }
 
+  @Builder
+  photoTakeMsgSheet() {}
+
+  private async selectImage() {
+    let uri = await this.openPhoto();
+    if (uri === undefined) {
+      hilog.error(0x0000, 'OCRDemo', "Failed to get uri.");
+      return;
+    }
+    this.loadImage(uri);
+  }
+
+  private openPhoto(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let photoPicker: photoAccessHelper.PhotoViewPicker = new photoAccessHelper.PhotoViewPicker();
+      photoPicker.select({
+        MIMEType: photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE,
+        maxSelectNumber: 1
+      }).then((res: photoAccessHelper.PhotoSelectResult) => {
+        resolve(res.photoUris[0]);
+      }).catch((err: BusinessError) => {
+        hilog.error(0x0000, 'OCRDemo', `Failed to get photo image uri. code：${err.code}，message：${err.message}`);
+        reject('');
+      })
+    })
+  }
+
+  private loadImage(name: string) {
+    setTimeout(async () => {
+      try {
+        let fileSource = await fileIo.open(name, fileIo.OpenMode.READ_ONLY);
+        this.imageSource = image.createImageSource(fileSource.fd);
+        this.chooseImages = await this.imageSource.createPixelMap();
+      } catch (error) {
+        hilog.error(0x0000, 'OCRDemo', "fileIo.open error: " + JSON.stringify(error));
+      }
+    }, 100)
+  }
+
+  async onPageShow(): Promise<void> {
+    hilog.info(0x0000, '[OperateButtonTag]', 'success')
+    await this.startCamera();
+    // [StartExclude registerApplicationStateChange]
+    this.syncButtonSettings();
+    // [EndExclude registerApplicationStateChange]
+  }
+
   // 显示倒计时
   //
   // 倒计时结束自动拍照
   @Builder
   photoButton() {
-    Column() {
-      Column()
-        .width(48)
-        .height(48)
-        .borderRadius('50%')
-        .border({
-          color: Color.White,
-          width: 24
+    Column({space: 10}) {
+      Button('重新选择')
+        .onClick(() => {
+          this.startCamera()
         })
-    }
-    .width(64)
-    .height(64)
-    .borderRadius('50%')
-    .border({
-      color: Color.White,
-      width: 1
-    })
-    .justifyContent(FlexAlign.Center)
-    .onClick(() => {
-      if (this.photoDelayTime) {
-        this.isDelayTakePhoto = true;
-        this.photoRemainder = this.photoDelayTime;
-        this.photoDelayTimer = setInterval(() => {
-          this.photoRemainder--;
-          if (this.photoRemainder === 0) {
-            this.photoManager.capture(this.previewVM.isFront);
-            this.captureClickFlag++;
-            this.isDelayTakePhoto = false;
-            clearTimeout(this.photoDelayTimer);
-          }
-        }, 1000)
-      } else {
-        this.photoManager.capture(this.previewVM.isFront);
-        this.captureClickFlag++;
+
+      Column() {
+        Column()
+          .width(48)
+          .height(48)
+          .borderRadius('50%')
+          .border({
+            color: Color.White,
+            width: 24
+          })
       }
-    })
+      .bindSheet(this.isShownPhotoTakeMsgSheet, this.photoTakeMsgSheet, {
+        height: SheetSize.LARGE,
+        onDisappear: () => {
+          this.isShownPhotoTakeMsgSheet = false
+        }
+      })
+      .width(64)
+      .height(64)
+      .borderRadius('50%')
+      .border({
+        color: Color.White,
+        width: 1
+      })
+      .justifyContent(FlexAlign.Center)
+      .onClick(() => {
+        hilog.info(0x0000, 'awdwafdawfaw', 'success' + `:${this.isShownPhotoTakeMsgSheet}`)
+
+        // this.isShownPhotoTakeMsgSheet = true;
+        if (this.photoDelayTime) {
+          // this.isShownPhotoTakeMsgSheet = true;
+          this.photoRemainder = this.photoDelayTime;
+          this.photoDelayTimer = setInterval(() => {
+            this.photoRemainder--;
+            if (this.photoRemainder === 0) {
+              // this.isShownPhotoTakeMsgSheet = true;
+              this.photoManager.capture(this.previewVM.isFront);
+              this.captureClickFlag++;
+              this.isDelayTakePhoto = false;
+              clearTimeout(this.photoDelayTimer);
+            }
+          }, 1000)
+        } else {
+          // this.isShownPhotoTakeMsgSheet = true;
+          this.photoManager.capture(this.previewVM.isFront);
+          this.captureClickFlag++;
+          setTimeout(() => {
+            this.pathInfos.pushPath({ name: 'photo_Translation', param: this.thumbnail as PixelMap, onPop: async () => {
+              this.startCamera()
+              hilog.info(0x0000, '[OperateButtonTag]', 'success')
+              this.thumbnail = ''
+            }})
+            // [StartExclude registerApplicationStateChange]
+            // this.previewVM.openPreviewBlur();
+            // [EndExclude registerApplicationStateChange]
+            this.cameraManager.release();
+          }, 1000)
+        }
+      })
+    }
   }
 
   // 前置时开启镜像
@@ -224,18 +311,59 @@ struct OperateButtonsView {
       .borderWidth(this.thumbnail ? 1 : 0)
       .borderColor(Color.White)
       .clip(true)
-      .onClick(() => {
-        if (this.thumbnailUrl) {
-          this.context.startAbility({
-            parameters: { uri: this.thumbnailUrl },
-            action: 'ohos.want.action.viewData',
-            bundleName: 'com.huawei.hmos.photos',
-            abilityName: 'com.huawei.hmos.photos.MainAbility'
-          }).catch((err: BusinessError) => {
-            Logger.error(TAG, `showToast failed, code is ${err.code}, message is ${err.message}`);
-          });
+      .alt($r('app.media.mengcengxiangji'))
+      .onClick(async () => {
+        await this.selectImage()
+        if (this.chooseImages) {
+          // [StartExclude registerApplicationStateChange]
+          // this.previewVM.openPreviewBlur();
+          // [EndExclude registerApplicationStateChange]
+          this.cameraManager.release();
+
+          setTimeout(() => {
+            this.pathInfos.pushPath({ name: 'photo_Translation',
+              param: this.chooseImages as PixelMap,
+              onPop: async () => {
+                this.startCamera()
+              this.chooseImages = undefined
+                // await this.startCamera();
+                // // [StartExclude registerApplicationStateChange]
+                // this.syncButtonSettings();
+                // // [EndExclude registerApplicationStateChange]
+            }})
+          }, 1000)
+        } else {
+          this.getUIContext().showAlertDialog({
+            message: '选择出现错误'
+          })
         }
+        // if (this.thumbnailUrl) {
+        //   this.context.startAbility({
+        //     parameters: { uri: this.thumbnailUrl },
+        //     action: 'ohos.want.action.viewData',
+        //     bundleName: 'com.huawei.hmos.photos',
+        //     abilityName: 'com.huawei.hmos.photos.MainAbility'
+        //   }).catch((err: BusinessError) => {
+        //     Logger.error(TAG, `showToast failed, code is ${err.code}, message is ${err.message}`);
+        //   });
+        // }
       })
+  }
+  async startCamera() {
+    // cameraPosition：从 PreviewViewModel 拿到当前是前/后摄（枚举值）。
+    //
+    // sceneMode：拍照或录像场景（用于相机初始化）。
+    //
+    // this.previewVM.surfaceId：XComponent 提供的 surface id（必须在 XComponent onLoad 时已取得）。
+    //
+    // this.previewVM.getProfile：传入一个 callback（或函数引用），
+    // 用于相机在内部获取 camera.Profile（分辨率 / 格式）。
+    // 注意：你传的是函数引用，不是调用结果，
+    // 意味着 cameraManager.start 可能在内部调用该函数并传入相机方向参数（cameraOrientation）。
+    // 确保 cameraManager.start 的签名与此契合。
+    const cameraPosition = this.previewVM.getCameraPosition();
+    const sceneMode = this.previewVM.getSceneMode();
+    await this.cameraManager.start(this.previewVM.surfaceId, cameraPosition, sceneMode, this.previewVM.getProfile);
   }
 
   // 倒计时取消按钮
@@ -283,35 +411,43 @@ struct OperateButtonsView {
   // [End toggleCameraPositionButton]
 
   build() {
-    Row() {
-      this.thumbnailButton()
-      if (this.previewVM.isPhotoMode()) {
-        this.photoButton()
-      } else {
-        if (this.videoManager.isRecording()) {
-          this.videoStopButton()
+    // NavDestination() {
+      Row() {
+        this.thumbnailButton()
+        if (this.previewVM.isPhotoMode()) {
+          this.photoButton()
         } else {
-          this.videoStartButton()
+          if (this.videoManager.isRecording()) {
+            this.videoStopButton()
+          } else {
+            this.videoStartButton()
+          }
+        }
+        if (!this.videoManager.isRecording()) {
+          this.toggleCameraPositionButton()
+        }
+        if (this.previewVM.isVideoMode() && this.videoManager.state === AVRecorderState.STARTED) {
+          this.videoPauseButton()
+        } else if (this.previewVM.isVideoMode() && this.videoManager.state === AVRecorderState.PAUSED) {
+          this.videoResumeButton()
         }
       }
-      if (!this.videoManager.isRecording()) {
-        this.toggleCameraPositionButton()
-      }
-      if (this.previewVM.isVideoMode() && this.videoManager.state === AVRecorderState.STARTED) {
-        this.videoPauseButton()
-      } else if (this.previewVM.isVideoMode() && this.videoManager.state === AVRecorderState.PAUSED) {
-        this.videoResumeButton()
-      }
-    }
-    .justifyContent(FlexAlign.SpaceAround)
-    .id('operateButtonsView')
-    .alignRules({
-      bottom: { anchor: '__container__', align: VerticalAlign.Bottom },
-      middle: { anchor: '__container__', align: HorizontalAlign.Center },
-    })
-    .margin({ bottom: 90 })
-    .width('90%')
+      .justifyContent(FlexAlign.SpaceAround)
+      .id('operateButtonsView')
+      .alignRules({
+        bottom: { anchor: '__container__', align: VerticalAlign.Bottom },
+        middle: { anchor: '__container__', align: HorizontalAlign.Center },
+      })
+      .margin({ bottom: 90 })
+      .width('90%')
+    // }
   }
+}
+
+export interface paramType {
+  img: PixelMap | null
+  lanFrom: string
+  lanTo: string
 }
 
 export default OperateButtonsView;

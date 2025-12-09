@@ -16,12 +16,15 @@ import CameraConstant from '../constants/Constants';
 import { calCameraPoint, getClampedChildPosition, limitNumberInRange, showToast } from '../utils/CommonUtil';
 import RefreshableTimer from '../utils/RefreshableTimer';
 import PermissionManager from '../utils/PermissionManager';
+import photo_translation from '../views/photo_translation';
 import ZoomButtonsView from '../views/ZoomButtonsView';
 import ModeButtonsView from '../views/ModeButtonsView';
 import SettingButtonsView from '../views/SettingButtonsView';
 import OperateButtonsView from '../views/OperateButtonsView';
 import PreviewViewModel from '../viewmodels/PreviewViewModel';
 import { Logger } from 'utils';
+import { ChangeLanguage } from '../views/ChangeLanguage';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Extend(SymbolGlyph)
 function funcButtonStyle() {
@@ -34,9 +37,14 @@ function funcButtonStyle() {
 
 const TAG = 'Index'
 
-@Entry
+// @Entry
 @Component
 export struct Index {
+  @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
+  @StorageProp('topRectHeight') topRectHeight: number = 0;
+  @State lanFrom: string = 'ch-Hans'
+  @State lanTo: string = 'en'
+  @Provide('pathStack') pathInfos: NavPathStack = new NavPathStack()
   // context：当前组件/页面的 HostContext，通常用于获取能力（Camera、UI 等）和系统服务。
   //
   // applicationContext：整个应用级别的 Context，可以用于注册应用生命周期事件（前台/后台）。
@@ -60,10 +68,10 @@ export struct Index {
   private photoManager: PhotoManager = new PhotoManager(this.context, true, this.isSinglePhoto);
   private previewManager: PreviewManager = new PreviewManager(() => {
     this.onPreviewStart()
-  });
+  })
   private imageReceiverManager: ImageReceiverManager = new ImageReceiverManager(px => {
     this.onImageReceiver(px);
-  });
+  })
   private cameraManager: CameraManager = new CameraManager(this.context, [this.previewManager,
     this.photoManager, this.videoManager, this.imageReceiverManager]);
   // previewVM：预览 ViewModel，保存当前预览尺寸、缩放、曝光、相机模式等数据。
@@ -141,6 +149,13 @@ export struct Index {
   @StorageLink('captureClick') @Watch('onCaptureClick') captureClickFlag: number = 0;
   @State flashBlackOpacity: number = 1;
 
+  onPageHide(): void {
+    // [StartExclude registerApplicationStateChange]
+    this.previewVM.openPreviewBlur();
+    // [EndExclude registerApplicationStateChange]
+    this.cameraManager.release();
+  }
+
   // 订阅重力（重力传感器）事件以获取设备姿态（addGravityEventListener）
   //
   // 初始化“休眠计时器”，在一段时间无交互时暂停相机（initSleepTimer）
@@ -151,6 +166,7 @@ export struct Index {
   //
   // 在折叠设备状态变化时重启相机（onFoldStatusChange）
   async aboutToAppear() {
+    hilog.info(0x0000, 'addGravityEventListenerTag', 'success')
     this.addGravityEventListener();
     this.initSleepTimer();
     this.registerApplicationStateChange();
@@ -595,14 +611,14 @@ export struct Index {
   // 常用于开启/隐藏左下角拍照缩略图或拍照预览。
   @Builder
   previewImageButton() {
-    SymbolGlyph(this.isPreviewImageVisible ? $r('sys.symbol.eye') : $r('sys.symbol.eye_slash'))
-      .funcButtonStyle()
-      .onClick(() => {
-        this.isPreviewImageVisible = !this.isPreviewImageVisible;
-        const message =
-          this.isPreviewImageVisible ? '双路预览已开启' : '双路预览已关闭';
-        showToast(this.getUIContext(), message);
-      })
+    // SymbolGlyph(this.isPreviewImageVisible ? $r('sys.symbol.eye') : $r('sys.symbol.eye_slash'))
+    //   .funcButtonStyle()
+    //   .onClick(() => {
+    //     this.isPreviewImageVisible = !this.isPreviewImageVisible;
+    //     const message =
+    //       this.isPreviewImageVisible ? '双路预览已开启' : '双路预览已关闭';
+    //     showToast(this.getUIContext(), message);
+    //   })
   }
 
   // getPreviewImageWidth()（宽度计算逻辑）
@@ -677,100 +693,122 @@ export struct Index {
   }
 
   build() {
-    RelativeContainer() {
+    Navigation(this.pathInfos) {
+      RelativeContainer() {
 
-      this.preview()
+        this.preview()
 
-      if (this.isPreviewImageVisible) {
-        this.previewImageView()
-      }
+        if (this.isPreviewImageVisible) {
+          this.previewImageView()
+        }
 
-      this.funcButtonsView()
+        this.funcButtonsView()
 
-      SettingButtonsView({
-        previewVM: this.previewVM,
-        cameraManager: this.cameraManager,
-        previewManager: this.previewManager,
-        photoManager: this.photoManager,
-        videoManager: this.videoManager,
-        photoDelayTime: this.photoDelayTime,
-        isSinglePhoto: this.isSinglePhoto,
-        isLivePhoto: this.isLivePhoto,
-        isStabilizationEnabled: this.isStabilizationEnabled
-      })
-
-      // 限制 zoom 按钮的出现条件：
-      //
-      // 不在剩余照片数量限制状态
-      //
-      // 不在前置摄像头（前置通常无多焦段）
-      //
-      // 若启用防抖的录像模式，则隐藏 zoom
-      if (!this.photoRemainder) {
-        // if (!this.previewVM.isFront &&
-        //   !(this.isStabilizationEnabled && this.previewVM.isVideoMode())) {
-        //   // 这个组件是摄像头 UI 中的“变焦按钮组”，根据 zooms 数组（如 [0.5, 1, 2, 5]）展示多个圆形按钮。
-        //   // 用户点击按钮即可切换摄像头变焦倍率。
-        //   ZoomButtonsView({
-        //     cameraManager: this.cameraManager,
-        //     zoomRange: this.zoomRange,
-        //     zooms: this.zooms,
-        //     currentZoom: this.currentZoom
-        //   })
-        // }
-
-        // 显示相机模式切换按钮（拍照 / 视频）
-        //
-        // 点击后切换相机模式
-        //
-        // 销毁旧的 Camera 管线并重新启动新的模式
-        //
-        // 配置新的模式参数（帧率、是否是移动照片模式、单张拍照回调）
-        //
-        // 同步 UI 设置，例如 PreviewViewModel 更新预览视图大小、场景模式等
-
-        // ModeButtonsView({
-        //   previewVM: this.previewVM,
-        //   photoManager: this.photoManager,
-        //   videoManager: this.videoManager,
-        //   cameraManager: this.cameraManager,
-        //   syncButtonSettings: () => {
-        //     this.syncButtonSettings();
-        //   }
-        // })
-
-        // 组件所做的事情
-        //
-        // 每个状态字段的作用
-        //
-        // 各按钮（拍照、录视频、切换镜头等）如何运作
-        //
-        // 生命周期、UI 构建逻辑
-        //
-        // 与 CameraManager / PhotoManager / VideoManager / PreviewViewModel 的交互机制
-        OperateButtonsView({
+        SettingButtonsView({
           previewVM: this.previewVM,
           cameraManager: this.cameraManager,
+          previewManager: this.previewManager,
           photoManager: this.photoManager,
           videoManager: this.videoManager,
-          isDelayTakePhoto: this.isDelayTakePhoto,
           photoDelayTime: this.photoDelayTime,
-          photoRemainder: this.photoRemainder,
-          syncButtonSettings: () => {
-            this.syncButtonSettings();
-          }
+          isSinglePhoto: this.isSinglePhoto,
+          isLivePhoto: this.isLivePhoto,
+          isStabilizationEnabled: this.isStabilizationEnabled
         })
-      }
 
-      if (this.isSleeping) {
-        this.wakeupMask()
-      }
+        ChangeLanguage({ lanFrom: this.lanFrom, lanTo: this.lanTo})
+          .alignRules({
+            bottom: { anchor: 'modeButtonsView', align: VerticalAlign.Top },
+            middle: { anchor: 'modeButtonsView', align: HorizontalAlign.Center }
+          })
 
+        // // 限制 zoom 按钮的出现条件：
+        // //
+        // // 不在剩余照片数量限制状态
+        // //
+        // // 不在前置摄像头（前置通常无多焦段）
+        // //
+        // // 若启用防抖的录像模式，则隐藏 zoom
+        if (!this.photoRemainder) {
+        //   if (!this.previewVM.isFront &&
+        //     !(this.isStabilizationEnabled && this.previewVM.isVideoMode())) {
+        //   //   // 这个组件是摄像头 UI 中的“变焦按钮组”，根据 zooms 数组（如 [0.5, 1, 2, 5]）展示多个圆形按钮。
+        //   //   // 用户点击按钮即可切换摄像头变焦倍率。
+        //     ZoomButtonsView({
+        //       cameraManager: this.cameraManager,
+        //       zoomRange: this.zoomRange,
+        //       zooms: this.zooms,
+        //       currentZoom: this.currentZoom
+        //     })
+        //   }
+
+          // 显示相机模式切换按钮（拍照 / 视频）
+          //
+          // 点击后切换相机模式
+          //
+          // 销毁旧的 Camera 管线并重新启动新的模式
+          //
+          // 配置新的模式参数（帧率、是否是移动照片模式、单张拍照回调）
+          //
+          // 同步 UI 设置，例如 PreviewViewModel 更新预览视图大小、场景模式等
+
+          // ModeButtonsView({
+          //   previewVM: this.previewVM,
+          //   photoManager: this.photoManager,
+          //   videoManager: this.videoManager,
+          //   cameraManager: this.cameraManager,
+          //   syncButtonSettings: () => {
+          //     this.syncButtonSettings();
+          //   }
+          // })
+
+          // 组件所做的事情
+          //
+          // 每个状态字段的作用
+          //
+          // 各按钮（拍照、录视频、切换镜头等）如何运作
+          //
+          // 生命周期、UI 构建逻辑
+          //
+          // 与 CameraManager / PhotoManager / VideoManager / PreviewViewModel 的交互机制
+          OperateButtonsView({
+            previewVM: this.previewVM,
+            cameraManager: this.cameraManager,
+            photoManager: this.photoManager,
+            videoManager: this.videoManager,
+            isDelayTakePhoto: this.isDelayTakePhoto,
+            photoDelayTime: this.photoDelayTime,
+            photoRemainder: this.photoRemainder,
+            lanFrom: this.lanFrom,
+            lanTo: this.lanTo,
+            syncButtonSettings: () => {
+              this.syncButtonSettings();
+            }
+          })
+        }
+
+        if (this.isSleeping) {
+          this.wakeupMask()
+        }
+
+      }
+      .height('100%')
+      .width('100%')
+      .backgroundColor(Color.Black)
+      .onClick(() => {
+      })
     }
-    .height('100%')
-    .width('100%')
-    .backgroundColor(Color.Black)
-    .onClick(() => {
+    .navDestination(this.navMap)
+    .padding({
+      top: this.getUIContext().px2vp(this.topRectHeight),
+      // bottom: this.getUIContext().px2vp(this.bottomRectHeight)
     })
+  }
+
+  @Builder
+  navMap(name: string) {
+    if (name == 'photo_Translation') {
+      photo_translation()
+    }
   }
 }
