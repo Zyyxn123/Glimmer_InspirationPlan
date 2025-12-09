@@ -707,17 +707,17 @@ export struct Index {
       //
       // 若启用防抖的录像模式，则隐藏 zoom
       if (!this.photoRemainder) {
-        if (!this.previewVM.isFront &&
-          !(this.isStabilizationEnabled && this.previewVM.isVideoMode())) {
-          // 这个组件是摄像头 UI 中的“变焦按钮组”，根据 zooms 数组（如 [0.5, 1, 2, 5]）展示多个圆形按钮。
-          // 用户点击按钮即可切换摄像头变焦倍率。
-          ZoomButtonsView({
-            cameraManager: this.cameraManager,
-            zoomRange: this.zoomRange,
-            zooms: this.zooms,
-            currentZoom: this.currentZoom
-          })
-        }
+        // if (!this.previewVM.isFront &&
+        //   !(this.isStabilizationEnabled && this.previewVM.isVideoMode())) {
+        //   // 这个组件是摄像头 UI 中的“变焦按钮组”，根据 zooms 数组（如 [0.5, 1, 2, 5]）展示多个圆形按钮。
+        //   // 用户点击按钮即可切换摄像头变焦倍率。
+        //   ZoomButtonsView({
+        //     cameraManager: this.cameraManager,
+        //     zoomRange: this.zoomRange,
+        //     zooms: this.zooms,
+        //     currentZoom: this.currentZoom
+        //   })
+        // }
 
         // 显示相机模式切换按钮（拍照 / 视频）
         //
@@ -728,15 +728,16 @@ export struct Index {
         // 配置新的模式参数（帧率、是否是移动照片模式、单张拍照回调）
         //
         // 同步 UI 设置，例如 PreviewViewModel 更新预览视图大小、场景模式等
-        ModeButtonsView({
-          previewVM: this.previewVM,
-          photoManager: this.photoManager,
-          videoManager: this.videoManager,
-          cameraManager: this.cameraManager,
-          syncButtonSettings: () => {
-            this.syncButtonSettings();
-          }
-        })
+
+        // ModeButtonsView({
+        //   previewVM: this.previewVM,
+        //   photoManager: this.photoManager,
+        //   videoManager: this.videoManager,
+        //   cameraManager: this.cameraManager,
+        //   syncButtonSettings: () => {
+        //     this.syncButtonSettings();
+        //   }
+        // })
 
         // 组件所做的事情
         //

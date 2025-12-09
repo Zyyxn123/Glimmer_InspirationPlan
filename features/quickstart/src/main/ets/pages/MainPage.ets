@@ -17,6 +17,8 @@ export function MainPageBuilder() {
   MainPage();
 }
 
+AppStorage.setOrCreate('TabsBarHeight_changeToCamera', false)
+
 @Component
 export struct MainPage {
   @State currentIndex: number = 0;
@@ -26,6 +28,7 @@ export struct MainPage {
   @StorageLink('PageInfos') pageInfo: NavPathStack = new NavPathStack();
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
+  @StorageLink('TabsBarHeight_changeToCamera') TabsBarHeight_changeToCameraBol: boolean = false
   private controller: HdsTabsController = new HdsTabsController();
   private uiContext: UIContext | undefined = undefined;
 
@@ -54,23 +57,30 @@ export struct MainPage {
 
   @Builder
   tabBuilder(targetIndex: number) {
-    Stack({ alignContent: Alignment.Center }) {
-      Image($r('app.media.icon_tabs_pics'))
-        .width(80)
-        .height(80)
-        .borderRadius(40)
-        .backgroundColor(this.currentIndex == targetIndex ? ComponentsColor.AZURITE_DARK_2ND :
-          ComponentsColor.AZURITE_BRIGHT_2ND)
-        .rotate({
-          x: 0,
-          y: 0,
-          z: 1,
-          centerX: '50%',
-          centerY: '50%',
-          angle: this.angle
-        })
+    if (this.TabsBarHeight_changeToCameraBol) {
+
+    } else {
+      Stack({ alignContent: Alignment.Center }) {
+        Image($r('app.media.icon_tabs_pics'))
+          .width(80)
+          .height(80)
+          .borderRadius(40)
+          .backgroundColor(this.currentIndex == targetIndex ? ComponentsColor.AZURITE_DARK_2ND :
+            ComponentsColor.AZURITE_BRIGHT_2ND)
+          .rotate({
+            x: 0,
+            y: 0,
+            z: 1,
+            centerX: '50%',
+            centerY: '50%',
+            angle: this.angle
+          })
+          .transition(TransitionEffect.asymmetric(TransitionEffect.OPACITY.animation({ duration: 200})
+            .combine(TransitionEffect.scale({ x: 0, y: 0})),TransitionEffect.OPACITY.animation({ duration: 200})
+            .combine(TransitionEffect.scale({ x: 1, y: 1}))))
+      }
+      .margin({ bottom: 30 })
     }
-    .margin({ bottom: 30 })
   }
 
   @Builder
@@ -152,43 +162,49 @@ export struct MainPage {
       .barOverlap(true)
       .barBackgroundBlurStyle(BlurStyle.Thin, { policy: BlurStyleActivePolicy.ALWAYS_ACTIVE })
       .barBackgroundStyle({ maskColor: ComponentsColor.AZURITE_BRIGHT_3RD, maskHeight: 70 })
-      .barHeight(65)
+      .barHeight(/*this.TabsBarHeight_changeToCameraBol ? 0 : */65)
       .onChange((index: number) => {
         this.currentIndex = index
         if (this.currentIndex == 1) {
           if (!this.uiContext) {
             return;
           }
-          this.uiContext.keyframeAnimateTo({ iterations: 2 }, [
-            {
-              duration: 150,
-              curve: Curve.Linear,
-              event: () => {
-                this.angle = -10
-              }
-            },
-            {
-              duration: 150,
-              curve: Curve.Linear,
-              event: () => {
-                this.angle = 0
-              }
-            },
-            {
-              duration: 150,
-              curve: Curve.Linear,
-              event: () => {
-                this.angle = 20
-              }
-            },
-            {
-              duration: 150,
-              curve: Curve.Linear,
-              event: () => {
-                this.angle = 0
-              }
-            },
-          ])
+          // setTimeout(() => {
+            AppStorage.set('TabsBarHeight_changeToCamera', true)
+          // }, 1450)
+
+          // this.uiContext.keyframeAnimateTo({ iterations: 2 }, [
+          //   {
+          //     duration: 150,
+          //     curve: Curve.Linear,
+          //     event: () => {
+          //       this.angle = -10
+          //     }
+          //   },
+          //   {
+          //     duration: 150,
+          //     curve: Curve.Linear,
+          //     event: () => {
+          //       this.angle = 0
+          //     }
+          //   },
+          //   {
+          //     duration: 150,
+          //     curve: Curve.Linear,
+          //     event: () => {
+          //       this.angle = 20
+          //     }
+          //   },
+          //   {
+          //     duration: 150,
+          //     curve: Curve.Linear,
+          //     event: () => {
+          //       this.angle = 0
+          //     }
+          //   },
+          // ])
+        } else {
+          AppStorage.set('TabsBarHeight_changeToCamera', false)
         }
       })
     }
