@@ -13,6 +13,7 @@ import {
 import { HTTPForRandomPoetry } from '../HTTP/HTTPForRandomPoetry'
 import { HTTPForZhToEn } from '../HTTP/HTTPForZhToEn'
 import hilog from '@ohos.hilog'
+import { PlayerForPronunciation } from '../AVplayer/PlayerForPronunciation'
 
 // import { SpeechToSpeech } from '../HTTP/HTTPForTranslation'
 
@@ -84,9 +85,9 @@ export struct MainFuc {
               Row() {
                 Text('英/\'' + HTTPForEnglishWordToChinese.myData.data.ukphone)
 
-                Image(ComponentsPictures.ICON_PHONE_SOUND)
-                  .width(15)
-                  .margin({ left: 2 })
+                // Image(ComponentsPictures.ICON_PHONE_SOUND)
+                //   .width(15)
+                //   .margin({ left: 2 })
               }
               .padding(5)
               .borderRadius(5)
@@ -95,9 +96,9 @@ export struct MainFuc {
               Row() {
                 Text('美/\'' + HTTPForEnglishWordToChinese.myData.data.usphone)
 
-                Image(ComponentsPictures.ICON_PHONE_SOUND)
-                  .width(15)
-                  .margin({ left: 2 })
+                // Image(ComponentsPictures.ICON_PHONE_SOUND)
+                //   .width(15)
+                //   .margin({ left: 2 })
               }
               .padding(5)
               .borderRadius(5)

@@ -6,6 +6,7 @@ import { ChangeLanguage } from "../View/ChangeLanguage";
 import classifyViewModel from "../ViewModel/ClassifyListViewModel";
 import ClassifyAlphaListModel from "../Model/ClassifyAlphaListModel";
 import { JSON } from "@kit.ArkTS";
+import { PlayerForPronunciation } from "../AVplayer/PlayerForPronunciation";
 
 @Component
 export struct Translation {
@@ -14,7 +15,7 @@ export struct Translation {
 
 
   aboutToAppear(): void {
-
+    // PlayerForPronunciation.Instance().getInit()
   }
 
 
