@@ -84,6 +84,10 @@ struct OperateButtonsView {
   photoTakeMsgSheet() {}
 
   private async selectImage() {
+    this.previewVM.openPreviewBlur();
+    // [EndExclude registerApplicationStateChange]
+    this.cameraManager.release();
+
     let uri = await this.openPhoto();
     if (uri === undefined) {
       hilog.error(0x0000, 'OCRDemo', "Failed to get uri.");
@@ -113,19 +117,21 @@ struct OperateButtonsView {
         let fileSource = await fileIo.open(name, fileIo.OpenMode.READ_ONLY);
         this.imageSource = image.createImageSource(fileSource.fd);
         this.chooseImages = await this.imageSource.createPixelMap();
+
+        this.startCamera()
       } catch (error) {
         hilog.error(0x0000, 'OCRDemo', "fileIo.open error: " + JSON.stringify(error));
       }
     }, 100)
   }
 
-  async onPageShow(): Promise<void> {
-    hilog.info(0x0000, '[OperateButtonTag]', 'success')
-    await this.startCamera();
-    // [StartExclude registerApplicationStateChange]
-    this.syncButtonSettings();
-    // [EndExclude registerApplicationStateChange]
-  }
+  // async onPageShow(): Promise<void> {
+  //   hilog.info(0x0000, '[OperateButtonTag]', 'success')
+  //   await this.startCamera();
+  //   // [StartExclude registerApplicationStateChange]
+  //   this.syncButtonSettings();
+  //   // [EndExclude registerApplicationStateChange]
+  // }
 
   // 显示倒计时
   //
@@ -134,9 +140,19 @@ struct OperateButtonsView {
   photoButton() {
     Column({space: 10}) {
       Button('重新选择')
-        .onClick(() => {
-          this.startCamera()
+        .onClick(async () => {
+          this.previewVM.openPreviewBlur();
+          // [EndExclude registerApplicationStateChange]
+          await this.cameraManager.release();
+
+          setTimeout(() => {
+            this.startCamera()
+          }, 500)
+
+          hilog.info(0x0000, '[photoButtonTag]', AppStorage.get('lanTo'))
         })
+        .fontColor(Color.White)
+        .backgroundColor('#ccc')
 
       Column() {
         Column()
@@ -312,31 +328,38 @@ struct OperateButtonsView {
       .borderColor(Color.White)
       .clip(true)
       .alt($r('app.media.mengcengxiangji'))
-      .onClick(async () => {
-        await this.selectImage()
-        if (this.chooseImages) {
-          // [StartExclude registerApplicationStateChange]
-          // this.previewVM.openPreviewBlur();
-          // [EndExclude registerApplicationStateChange]
-          this.cameraManager.release();
+      .onClick(() => {
+        this.selectImage()
+          .then(() => {
+            if (this.chooseImages) {
+              // [StartExclude registerApplicationStateChange]
+              this.previewVM.openPreviewBlur();
+              // [EndExclude registerApplicationStateChange]
+              this.cameraManager.release();
 
-          setTimeout(() => {
-            this.pathInfos.pushPath({ name: 'photo_Translation',
-              param: this.chooseImages as PixelMap,
-              onPop: async () => {
-                this.startCamera()
-              this.chooseImages = undefined
-                // await this.startCamera();
-                // // [StartExclude registerApplicationStateChange]
-                // this.syncButtonSettings();
-                // // [EndExclude registerApplicationStateChange]
-            }})
-          }, 1000)
-        } else {
-          this.getUIContext().showAlertDialog({
-            message: '选择出现错误'
+              setTimeout(() => {
+                this.pathInfos.pushPath({ name: 'photo_Translation',
+                  param: this.chooseImages as PixelMap,
+                  onPop: async () => {
+                    this.startCamera()
+                    this.chooseImages = undefined
+                    // await this.startCamera();
+                    // // [StartExclude registerApplicationStateChange]
+                    // this.syncButtonSettings();
+                    // // [EndExclude registerApplicationStateChange]
+                  }})
+              }, 1000)
+            } else {
+              this.getUIContext().showAlertDialog({
+                message: '图片加载失败'
+              })
+            }
+        })
+          .catch(() => {
+            this.getUIContext().showAlertDialog({
+              message: '选择图片出现错误'
+            })
           })
-        }
         // if (this.thumbnailUrl) {
         //   this.context.startAbility({
         //     parameters: { uri: this.thumbnailUrl },
@@ -349,6 +372,7 @@ struct OperateButtonsView {
         // }
       })
   }
+
   async startCamera() {
     // cameraPosition：从 PreviewViewModel 拿到当前是前/后摄（枚举值）。
     //

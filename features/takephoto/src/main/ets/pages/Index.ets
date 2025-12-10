@@ -37,21 +37,23 @@ function funcButtonStyle() {
 
 const TAG = 'Index'
 
+AppStorage.setOrCreate('lanTo', 'en')
+
 // @Entry
 @Component
 export struct Index {
-  @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
-  @StorageProp('topRectHeight') topRectHeight: number = 0;
+  @StorageProp('bottomRectHeight') bottomRectHeight: number = 0
+  @StorageProp('topRectHeight') topRectHeight: number = 0
   @State lanFrom: string = 'ch-Hans'
-  @State lanTo: string = 'en'
+  @StorageLink('lanTo') lanTo: string = 'en'
   @Provide('pathStack') pathInfos: NavPathStack = new NavPathStack()
   // context：当前组件/页面的 HostContext，通常用于获取能力（Camera、UI 等）和系统服务。
   //
   // applicationContext：整个应用级别的 Context，可以用于注册应用生命周期事件（前台/后台）。
   //
   // windowClass：当前窗口实例（MainWindow），可用于监听窗口尺寸变化、旋转等事件，例如 windowSizeChange。
-  private context: Context = this.getUIContext().getHostContext()!;
-  private applicationContext = this.context.getApplicationContext();
+  private context: Context = this.getUIContext().getHostContext()!
+  private applicationContext = this.context.getApplicationContext()
   private windowClass = (this.context as common.UIAbilityContext).windowStage.getMainWindowSync();
   // VideoManager：管理视频拍摄输出，包括开始/停止录像。
   //
@@ -62,18 +64,18 @@ export struct Index {
   // ImageReceiverManager：用于接收原始图像帧（PixelMap），可以用于特效或保存。
   //
   // CameraManager：统一管理相机实例，负责启动、停止、切换摄像头，并整合上面 4 个输出管理器。
-  @State videoManager: VideoManager = new VideoManager(this.context);
-  @State isSinglePhoto: boolean = false;
-  @State isLivePhoto: boolean = false;
+  @State videoManager: VideoManager = new VideoManager(this.context)
+  @State isSinglePhoto: boolean = false
+  @State isLivePhoto: boolean = false
   private photoManager: PhotoManager = new PhotoManager(this.context, true, this.isSinglePhoto);
   private previewManager: PreviewManager = new PreviewManager(() => {
     this.onPreviewStart()
   })
   private imageReceiverManager: ImageReceiverManager = new ImageReceiverManager(px => {
-    this.onImageReceiver(px);
+    this.onImageReceiver(px)
   })
   private cameraManager: CameraManager = new CameraManager(this.context, [this.previewManager,
-    this.photoManager, this.videoManager, this.imageReceiverManager]);
+    this.photoManager, this.videoManager, this.imageReceiverManager])
   // previewVM：预览 ViewModel，保存当前预览尺寸、缩放、曝光、相机模式等数据。
   //
   // isGridLineVisible：网格线显示状态（取景辅助）。
@@ -88,23 +90,23 @@ export struct Index {
   //
   // focusBoxTimer：自动隐藏对焦框的定时器，3秒后隐藏。
   @State previewVM: PreviewViewModel = new PreviewViewModel(this.getUIContext());
-  @State isGridLineVisible: boolean = false;
-  @State isLevelIndicatorVisible: boolean = false;
-  @State isPreviewImageVisible: boolean = false;
-  @State isFocusBoxVisible: boolean = false;
-  @State focusBoxPosition: Edges = { top: 0, left: 0 };
-  private focusBoxSize: Size = { width: 80, height: 80 };
+  @State isGridLineVisible: boolean = false
+  @State isLevelIndicatorVisible: boolean = false
+  @State isPreviewImageVisible: boolean = false
+  @State isFocusBoxVisible: boolean = false
+  @State focusBoxPosition: Edges = { top: 0, left: 0 }
+  private focusBoxSize: Size = { width: 80, height: 80 }
   private focusBoxTimer: RefreshableTimer = new RefreshableTimer(() => {
-    this.isFocusBoxVisible = false;
+    this.isFocusBoxVisible = false
   }, 3 * 1000);
   // exposureFontSize：曝光调节提示文字大小。
   //
   // isSleeping：设备进入休眠状态（长时间无操作）。
   //
   // sleepTimer：可刷新定时器，当用户长时间未操作时，自动关闭相机并给预览打模糊。
-  private exposureFontSize: number = 24;
-  @State isSleeping: boolean = false;
-  private sleepTimer?: RefreshableTimer;
+  private exposureFontSize: number = 24
+  @State isSleeping: boolean = false
+  private sleepTimer?: RefreshableTimer
   // zoomRange：当前相机可用缩放范围（最小/最大）。
   //
   // zooms：UI 上的缩放档位（1x、5x、10x）。
@@ -114,40 +116,40 @@ export struct Index {
   // isZoomPinching：是否正在用双指缩放。
   //
   // originZoomBeforePinch：记录双指缩放开始前的缩放值，用于增量计算。
-  private zoomRange: number[] = [];
-  @State zooms: number[] = [1, 5, 10];
-  @State currentZoom: number = 1;
-  @State isZoomPinching: boolean = false;
-  private originZoomBeforePinch: number = 1; // record zoom after pinch, sale base it.
+  private zoomRange: number[] = []
+  @State zooms: number[] = [1, 5, 10]
+  @State currentZoom: number = 1
+  @State isZoomPinching: boolean = false
+  private originZoomBeforePinch: number = 1 // record zoom after pinch, sale base it.
   // isStabilizationEnabled：是否开启视频/拍照防抖。
   //
   // previewImage：拍照后显示的静态图片，支持 PixelMap 或本地资源字符串。
   //
   // PreviewImageHeight：UI 上显示缩略预览的高度。
-  @State isStabilizationEnabled: boolean = false;
-  @State previewImage: PixelMap | ResourceStr = '';
-  private PreviewImageHeight: number = 80;
+  @State isStabilizationEnabled: boolean = false
+  @State previewImage: PixelMap | ResourceStr = ''
+  private PreviewImageHeight: number = 80
   // photoDelayTime & photoRemainder：延迟拍照倒计时相关。
   //
   // isDelayTakePhoto：是否正在倒计时拍照。
   //
   // acc：加速度/重力传感器数据，用于判断设备姿态或稳定性。
-  @State photoDelayTime: number = 0;
-  @State photoRemainder: number = 0;
-  @State isDelayTakePhoto: boolean = false;
-  @State acc: sensor.AccelerometerResponse = { x: 0, y: 0, z: 0 } as sensor.AccelerometerResponse;
+  @State photoDelayTime: number = 0
+  @State photoRemainder: number = 0
+  @State isDelayTakePhoto: boolean = false
+  @State acc: sensor.AccelerometerResponse = { x: 0, y: 0, z: 0 } as sensor.AccelerometerResponse
   // 回调函数，用于在旋转或窗口尺寸变化时重新设置预览尺寸。
   private setPreviewSize: () => void = () => {
-    this.previewVM.setPreviewSize();
+    this.previewVM.setPreviewSize()
   }
   // isShowBlack：拍照或切换相机时显示黑色遮罩。
   //
   // captureClickFlag：拍照点击状态，绑定到 Storage，可跨页面/跨组件共享。
   //
   // flashBlackOpacity：黑色遮罩透明度，用于闪光动画或拍照反馈。
-  @State isShowBlack: boolean = false;
-  @StorageLink('captureClick') @Watch('onCaptureClick') captureClickFlag: number = 0;
-  @State flashBlackOpacity: number = 1;
+  @State isShowBlack: boolean = false
+  @StorageLink('captureClick') @Watch('onCaptureClick') captureClickFlag: number = 0
+  @State flashBlackOpacity: number = 1
 
   onPageHide(): void {
     // [StartExclude registerApplicationStateChange]
@@ -167,16 +169,16 @@ export struct Index {
   // 在折叠设备状态变化时重启相机（onFoldStatusChange）
   async aboutToAppear() {
     hilog.info(0x0000, 'addGravityEventListenerTag', 'success')
-    this.addGravityEventListener();
-    this.initSleepTimer();
-    this.registerApplicationStateChange();
-    this.addOrientationChangeEventListener();
+    this.addGravityEventListener()
+    this.initSleepTimer()
+    this.registerApplicationStateChange()
+    this.addOrientationChangeEventListener()
     try {
       display.on('foldStatusChange', () => {
         this.onFoldStatusChange()
       });
     } catch (exception) {
-      Logger.error(TAG, `onFoldStatusChange failed, code is ${exception.code}, message is ${exception.message}`);
+      Logger.error(TAG, `onFoldStatusChange failed, code is ${exception.code}, message is ${exception.message}`)
     }
   }
 

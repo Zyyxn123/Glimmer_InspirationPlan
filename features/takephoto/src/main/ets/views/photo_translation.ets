@@ -75,9 +75,9 @@ export default struct photo_translation {
     NavDestination() {
       Scroll() {
         Column() {
-          if (/*this.dataResultValues*/this.dataValues) {
+          if ( HTTPForZhToEn.myData_tran) {
             Text(this.dataValues)
-            // Text(this.dataResultValues)
+            Text(HTTPForZhToEn.myData_tran)
           } else {
             LoadingProgress()
               .width(50)
@@ -91,9 +91,9 @@ export default struct photo_translation {
       .width('100%')
       .height('100%')
     }
-    .padding({
-      top: this.getUIContext().px2vp(this.topRectHeight),
-    })
+    // .padding({
+    //   top: this.getUIContext().px2vp(this.topRectHeight),
+    // })
     .onWillDisappear(() => {
       this.dataValues = ''
       this.dataResultValues = ''
@@ -107,15 +107,22 @@ export default struct photo_translation {
       if (this.pageParam !== null) {
         this.chooseImage = this.pageParam
         hilog.info(0x0000, '[TextFucTag]', 'success01')
-        await this.textRecognitionTest();
-        hilog.info(0x0000, '[TextFucTag]', 'success02:' + this.dataValues)
-        this.dataValues = smartFormatSpacing(this.dataValues)
-        hilog.info(0x0000, '[TextFucTag]', 'success03:' + this.dataValues)
-        // await HTTPForZhToEn.httpForZhToEn(this.dataValues, this.pageParam.lanTo)
+        this.textRecognitionTest()
+          .then(async () => {
+            hilog.info(0x0000, '[TextFucTag]', 'success02:' + this.dataValues)
+            this.dataValues = smartFormatSpacing(this.dataValues)
+            hilog.info(0x0000, '[TextFucTag]', 'success03:' + this.dataValues)
+            await HTTPForZhToEn.httpForZhToEn(this.dataValues, AppStorage.get('lanTo')!)
+            // this.dataResultValues = HTTPForZhToEn.myData_tran
+            hilog.info(0x0000, '[TextFucTag]', 'success04:' +  HTTPForZhToEn.myData_tran)
+        })
+
       }
     })
     .onBackPressed(() => {
       const popDestinationInfo = this.pathInfos.pop();
+      this.dataValues = ''
+      HTTPForZhToEn.myData_tran = ''
       return true;
     })
   }
