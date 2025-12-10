@@ -89,7 +89,7 @@ export struct Index {
   // focusBoxPosition & focusBoxSize：对焦框位置和大小。
   //
   // focusBoxTimer：自动隐藏对焦框的定时器，3秒后隐藏。
-  @State previewVM: PreviewViewModel = new PreviewViewModel(this.getUIContext());
+  @State previewVM: PreviewViewModel = new PreviewViewModel(this.getUIContext())
   @State isGridLineVisible: boolean = false
   @State isLevelIndicatorVisible: boolean = false
   @State isPreviewImageVisible: boolean = false
@@ -153,9 +153,9 @@ export struct Index {
 
   onPageHide(): void {
     // [StartExclude registerApplicationStateChange]
-    this.previewVM.openPreviewBlur();
+    this.previewVM.openPreviewBlur()
     // [EndExclude registerApplicationStateChange]
-    this.cameraManager.release();
+    this.cameraManager.release()
   }
 
   // 订阅重力（重力传感器）事件以获取设备姿态（addGravityEventListener）
