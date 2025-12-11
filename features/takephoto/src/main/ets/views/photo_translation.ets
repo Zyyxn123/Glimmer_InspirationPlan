@@ -18,6 +18,7 @@ export default struct photo_translation {
   private imageSource: image.ImageSource | undefined = undefined;
   @State chooseImage: PixelMap | null = null;
   @State dataValues: string = '';
+  @State maxLines: number = 2
   @State dataResultValues: string = '';
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
@@ -73,23 +74,43 @@ export default struct photo_translation {
 
   build() {
     NavDestination() {
-      Scroll() {
-        Column() {
-          if ( HTTPForZhToEn.myData_tran) {
-            Text(this.dataValues)
-            Text(HTTPForZhToEn.myData_tran)
-          } else {
-            LoadingProgress()
-              .width(50)
-              .height(50)
-              .margin({ top: 5})
+      List() {
+        ListItem() {
+          Column() {
+            if ( HTTPForZhToEn.myData_tran) {
+              Row() {
+                Text(this.dataValues)
+                  .margin({ bottom: 5})
+                  .maxLines(this.maxLines)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
+              }
+              .width('100%')
+              .border({width: {bottom: 1}, color: Color.Black, radius: { bottomLeft: 15, bottomRight: 15}})
+              .onClick(() => {
+                this.maxLines = this.maxLines == 2 ? -1 : 2
+              })
+
+              Text(HTTPForZhToEn.myData_tran)
+                .margin({ top: 15})
+            } else {
+              LoadingProgress()
+                .width(50)
+                .height(50)
+                .margin({ top: 5})
+            }
+
+            Column() {}
+            .width('100%')
+            .height(100)
           }
+          .margin({left: 10, right: 10})
+          .width('90%')
         }
         .width('100%')
-        .height('100%')
       }
+      .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .width('100%')
-      .height('100%')
     }
     // .padding({
     //   top: this.getUIContext().px2vp(this.topRectHeight),

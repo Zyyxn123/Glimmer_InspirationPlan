@@ -1,7 +1,7 @@
 export class ComponentsPictures {
-  static AVATAR_FIRST: ResourceStr = $r('app.media.avatar_1st')
-  static AVATAR_SECOND: ResourceStr = $r('app.media.avatar_2nd')
-  static AVATAR_THIRD: ResourceStr = $r('app.media.avatar_3rd')
+  static AVATAR_FIRST: ResourceStr = $r('app.media.avatar_1th')
+  static AVATAR_SECOND: ResourceStr = $r('app.media.avatar_2th')
+  static AVATAR_THIRD: ResourceStr = $r('app.media.avatar_3th')
   static AVATAR_FOURTH: ResourceStr = $r('app.media.avatar_4th')
   static AVATAR_FIFTH: ResourceStr = $r('app.media.avatar_5th')
   static AVATAR_SIXTH: ResourceStr = $r('app.media.avatar_6th')

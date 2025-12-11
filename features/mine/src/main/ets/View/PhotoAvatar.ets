@@ -7,6 +7,7 @@ export struct PhotoAvatar {
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
   @StorageLink('PageInfos')pageStack : NavPathStack = new NavPathStack();
+  @Consume('mine_pageStack') pageInfos: NavPathStack
 
   @Builder
   myBindSheetBuilder() {
@@ -30,15 +31,14 @@ export struct PhotoAvatar {
       .justifyContent(FlexAlign.SpaceBetween)
       .width('100%')
 
-
-      Button('从图库选择头像')
-        .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)
-        .fontColor(ComponentsColor.AZURITE_BRIGHT_1ST)
-        .width('80%')
       Button('选择默认头像')
         .width('80%')
         .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)
         .fontColor(ComponentsColor.AZURITE_BRIGHT_1ST)
+        .onClick(() => {
+          this.pageInfos.pushPath({ name: 'changePhotoAvatar'})
+          this.isShow_bindSheet = false
+        })
     }
     .margin({ left: 15, right: 20, top: 20 })
   }
