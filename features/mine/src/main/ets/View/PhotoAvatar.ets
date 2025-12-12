@@ -1,5 +1,5 @@
 import { ComponentsSize, ComponentsColor, ComponentsPictures} from 'utils'
-
+import { CPAViewModel } from "../ViewModel/CPAViewModel"
 
 @Component
 export struct PhotoAvatar {
@@ -51,10 +51,11 @@ export struct PhotoAvatar {
         .fontWeight(900)
         .fontColor(ComponentsColor.AZURITE_DARK_6TH)
 
-      Image(ComponentsPictures.AVATAR_FIRST)
+      Image($r(CPAViewModel.Instance().selImg))
         .width(100)
         .height(100)
         .borderRadius(50)
+        .alt(ComponentsPictures.AVATAR_FIRST)
         .bindSheet($$this.isShow_bindSheet, this.myBindSheetBuilder, {
           // backgroundColor: ComponentsColor.
           blurStyle: BlurStyle.Thin,

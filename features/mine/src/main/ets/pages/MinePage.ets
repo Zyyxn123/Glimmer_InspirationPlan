@@ -1,18 +1,21 @@
-import { ComponentsSize, ComponentsColor, ComponentsPictures} from 'utils'
+import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
 import { BasicCard } from '../View/BasicCard';
 import { BasicData } from '../View/BasicData';
 import { ChangePhotoAvatar } from '../View/ChangePhotoAvatar';
+import { Setting } from '../View/Setting';
 import { FunctionItems } from '../View/FunctionItems';
 import { FunctionSet } from '../View/FunctionSet';
 import { NameAndSign } from '../View/NameAndSign';
 import { PhotoAvatar } from '../View/PhotoAvatar';
 import { CPAViewModel } from '../ViewModel/CPAViewModel';
+import { ChangeBasicData } from '../View/ChangeBasicData';
+import { MyCollection } from '../View/MyCollection';
 
 // import { CommonCharts } from 'module_line_chart';
 
 @Component
 export struct MinePage {
-  @StorageLink('PageInfos')pageStack : NavPathStack = new NavPathStack();
+  @StorageLink('PageInfos') pageStack: NavPathStack = new NavPathStack();
   @Provide('mine_pageStack') pageInfos: NavPathStack = new NavPathStack()
 
   aboutToAppear(): void {
@@ -25,8 +28,13 @@ export struct MinePage {
   pageMaps(name: string) {
     if (name === 'changePhotoAvatar') {
       ChangePhotoAvatar()
+    } else if (name === 'changeSetting') {
+      Setting()
+    } else if (name === 'changeBasicData') {
+      ChangeBasicData()
+    } else if (name === 'myCollection') {
+      MyCollection()
     }
-
   }
 
   build() {
@@ -48,7 +56,7 @@ export struct MinePage {
         .height('100%')
         .linearGradient({
           direction: GradientDirection.Top,
-          colors: [ [ComponentsColor.AZURITE_DARK_3RD, 0],
+          colors: [[ComponentsColor.AZURITE_DARK_3RD, 0],
             [ComponentsColor.AZURITE_DARK_2ND, 0.1],
             [ComponentsColor.AZURITE_BRIGHT_2ND, 0.2],
             [ComponentsColor.AZURITE_BRIGHT_4TH, 0.4],
@@ -69,7 +77,8 @@ export struct MinePage {
         .width('100%')
         .height('70%')
         .backgroundColor('#ffffff')
-        .borderRadius({ topLeft: 25, topRight: 25})
+        .borderRadius({ topLeft: 25, topRight: 25 })
+
         // .radialGradient({
         //   center: ['50%', '50%'],
         //   radius: 180,

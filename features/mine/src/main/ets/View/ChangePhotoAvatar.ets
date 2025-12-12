@@ -10,7 +10,6 @@ export struct ChangePhotoAvatar {
   private cpaVM: CPAViewModel = CPAViewModel.Instance()
   @State PhAvatar: string[] = this.cpaVM.pa
 
-
   build() {
     NavDestination() {
       Column() {

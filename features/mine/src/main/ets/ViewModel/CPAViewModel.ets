@@ -19,6 +19,10 @@ export class CPAViewModel {
   }
 
   init() {
+    if (this.selImg == '') {
+      this.selImg ='app.media.avatar_1th'
+    }
+
     for (let i = 1; i <= 9; i++) {
       let str: string = 'app.media.avatar_' + i + 'th'
       this.pa.push(str)

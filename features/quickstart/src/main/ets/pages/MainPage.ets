@@ -162,7 +162,7 @@ export struct MainPage {
       .barOverlap(true)
       .barBackgroundBlurStyle(BlurStyle.Thin, { policy: BlurStyleActivePolicy.ALWAYS_ACTIVE })
       .barBackgroundStyle({ maskColor: ComponentsColor.AZURITE_BRIGHT_3RD, maskHeight: 70 })
-      .barHeight(/*this.TabsBarHeight_changeToCameraBol ? 0 : */65)
+      .barHeight(this.TabsBarHeight_changeToCameraBol ? 0 : 65)
       .onChange((index: number) => {
         this.currentIndex = index
         if (this.currentIndex == 1) {
