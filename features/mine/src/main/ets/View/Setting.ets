@@ -1,7 +1,8 @@
-import { ComponentsColor } from "utils"
+import { ComponentsColor, LogOrRegPreference } from "utils"
 import { dataType } from "../Model/SettingModel"
 import { CPAViewModel } from "../ViewModel/CPAViewModel"
 import { SettingViewModel } from "../ViewModel/SettingViewModel"
+import { promptAction } from "@kit.ArkUI"
 
 export interface paramsType {
   title: string
@@ -17,7 +18,8 @@ export struct Setting {
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
   private settingVM: SettingViewModel = SettingViewModel.Instance()
-
+  private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  private context: Context = this.getUIContext().getHostContext() as Context
 
   aboutToAppear(): void {
     this.settingLists = this.settingVM.dataList
@@ -26,6 +28,9 @@ export struct Setting {
   build() {
     NavDestination() {
       Column() {
+        /**
+         * basic data
+         * */
         Column() {
           ForEach(this.settingLists, (item: dataType, index: number) => {
             if (item.img) {
@@ -47,7 +52,7 @@ export struct Setting {
                     .margin({ left: 8, right: 10, bottom: 5 })
                 }
                 .onClick(() => {
-                  this.pageInfos.pushPath({ name: item.url})
+                  this.pageInfos.pushPath({ name: item.url })
                 })
               }
               .width('100%')
@@ -75,7 +80,7 @@ export struct Setting {
                     text: item.text,
                     limit: item.limit
                   }
-                  this.pageInfos.pushPath({ name: item.url, param: params})
+                  this.pageInfos.pushPath({ name: item.url, param: params })
                 })
               }
               .width('100%')
@@ -87,17 +92,76 @@ export struct Setting {
           })
         }
 
-        Button('退出登录')
-          .width('80%')
-          .height(40)
-          .backgroundColor(ComponentsColor.ROUGE_BRIGHT_2ND)
-          .margin({
-            bottom: this.getUIContext().px2vp(this.bottomRectHeight + 180),
-          })
-          .onClick(() => {
-            AppStorage.set('TabsBarHeight_changeToCamera', false)
-            AppStorage.set('LoginState', false)
-          })
+        /**
+         * delete account or log out
+         * */
+        Column() {
+          Button('获取当前所有账号')
+            .onClick(() => {
+              this.logOrRegPreference.getAllAcc()
+            })
+          Button('清空账号')
+            .onClick(() => {
+              this.logOrRegPreference.clearAllAcc()
+            })
+          Button('注销账号')
+            .width('80%')
+            .height(40)
+            .backgroundColor(ComponentsColor.ROUGE_DARK_1ST)
+            .margin({
+              bottom: 20
+            })
+            .onClick(() => {
+              this.getUIContext().showAlertDialog(
+                {
+                  title: '账号管理',
+                  message: '是否确定要注销账号，这将会失去您的本账号的一切信息。',
+                  autoCancel: true,
+                  alignment: DialogAlignment.Center,
+                  offset: { dx: 0, dy: -20 },
+                  gridCount: 3,
+                  buttons: [{
+                    value: '取消',
+                    action: () => {
+                    }
+                  },
+                    {
+                      enabled: true,
+                      defaultFocus: true,
+                      style: DialogButtonStyle.HIGHLIGHT,
+                      value: '确定',
+                      action: () => {
+                        this.getUIContext().getPromptAction().showToast({
+                          message: '注销成功',
+                          duration: 2000,
+                          showMode: promptAction.ToastShowMode.DEFAULT,
+                          bottom: 80
+                        })
+                        let acc: string = AppStorage.get('curAccount')
+                        this.logOrRegPreference.deleteAcc(acc)
+                        AppStorage.set('curAccount', '')
+                        AppStorage.set('TabsBarHeight_changeToCamera', false)
+                        AppStorage.set('LoginState', false)
+                      }
+                    }],
+                }
+              )
+
+            })
+
+          Button('退出登录')
+            .width('80%')
+            .height(40)
+            .backgroundColor(ComponentsColor.ROUGE_BRIGHT_1ST)
+            .margin({
+              bottom: this.getUIContext().px2vp(this.bottomRectHeight + 180),
+            })
+            .onClick(() => {
+              AppStorage.set('curAccount', '')
+              AppStorage.set('TabsBarHeight_changeToCamera', false)
+              AppStorage.set('LoginState', false)
+            })
+        }
       }
       .width('100%')
       .height('100%')

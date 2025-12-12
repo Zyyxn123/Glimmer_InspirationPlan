@@ -57,7 +57,7 @@ export struct MainPage {
 
   @Builder
   tabBuilder(targetIndex: number) {
-    if (this.TabsBarHeight_changeToCameraBol) {
+    if (/*this.TabsBarHeight_changeToCameraBol*/this.currentIndex == 1) {
 
     } else {
       Stack({ alignContent: Alignment.Center }) {
@@ -165,47 +165,47 @@ export struct MainPage {
       .barHeight(this.TabsBarHeight_changeToCameraBol ? 0 : 65)
       .onChange((index: number) => {
         this.currentIndex = index
-        if (this.currentIndex == 1) {
-          if (!this.uiContext) {
-            return;
-          }
-          // setTimeout(() => {
-            AppStorage.set('TabsBarHeight_changeToCamera', true)
-          // }, 1450)
-
-          // this.uiContext.keyframeAnimateTo({ iterations: 2 }, [
-          //   {
-          //     duration: 150,
-          //     curve: Curve.Linear,
-          //     event: () => {
-          //       this.angle = -10
-          //     }
-          //   },
-          //   {
-          //     duration: 150,
-          //     curve: Curve.Linear,
-          //     event: () => {
-          //       this.angle = 0
-          //     }
-          //   },
-          //   {
-          //     duration: 150,
-          //     curve: Curve.Linear,
-          //     event: () => {
-          //       this.angle = 20
-          //     }
-          //   },
-          //   {
-          //     duration: 150,
-          //     curve: Curve.Linear,
-          //     event: () => {
-          //       this.angle = 0
-          //     }
-          //   },
-          // ])
-        } else {
-          AppStorage.set('TabsBarHeight_changeToCamera', false)
-        }
+        // if (this.currentIndex == 1) {
+        //   if (!this.uiContext) {
+        //     return;
+        //   }
+        //   // setTimeout(() => {
+        //     AppStorage.set('TabsBarHeight_changeToCamera', true)
+        //   // }, 1450)
+        //
+        //   // this.uiContext.keyframeAnimateTo({ iterations: 2 }, [
+        //   //   {
+        //   //     duration: 150,
+        //   //     curve: Curve.Linear,
+        //   //     event: () => {
+        //   //       this.angle = -10
+        //   //     }
+        //   //   },
+        //   //   {
+        //   //     duration: 150,
+        //   //     curve: Curve.Linear,
+        //   //     event: () => {
+        //   //       this.angle = 0
+        //   //     }
+        //   //   },
+        //   //   {
+        //   //     duration: 150,
+        //   //     curve: Curve.Linear,
+        //   //     event: () => {
+        //   //       this.angle = 20
+        //   //     }
+        //   //   },
+        //   //   {
+        //   //     duration: 150,
+        //   //     curve: Curve.Linear,
+        //   //     event: () => {
+        //   //       this.angle = 0
+        //   //     }
+        //   //   },
+        //   // ])
+        // } else {
+        //   AppStorage.set('TabsBarHeight_changeToCamera', false)
+        // }
       })
     }
     .onReady((context: NavDestinationContext) => {

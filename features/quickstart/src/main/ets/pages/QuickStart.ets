@@ -2,6 +2,7 @@ import { LoginPage } from './LoginPage'
 import { MainPage } from './MainPage';
 
 AppStorage.setOrCreate('LoginState', false)
+AppStorage.setOrCreate('curAccount', '')
 
 @Component
 export struct QuickStart {

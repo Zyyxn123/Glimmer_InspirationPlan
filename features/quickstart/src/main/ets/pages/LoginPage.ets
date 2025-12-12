@@ -1,4 +1,5 @@
-import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
+import { ComponentsSize, ComponentsColor, ComponentsPictures, LogOrRegPreference } from 'utils'
+import { promptAction } from '@kit.ArkUI';
 
 
 @Builder
@@ -18,6 +19,8 @@ export struct LoginPage {
   @State isShown_sea: boolean = false
   @State myAccount: string = ''
   @State myPassword: string = ''
+  private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  private context: Context = this.getUIContext().getHostContext() as Context
   private intervalId: number | null = null;
   private effect: TransitionEffect = TransitionEffect.asymmetric(
     TransitionEffect.OPACITY.animation({ curve: Curve.EaseIn })
@@ -41,9 +44,18 @@ export struct LoginPage {
       .combine(TransitionEffect.translate({ y: 10 }))
   )
 
+  aboutToAppear(): void {
+    if (!this.logOrRegPreference.myPreference) {
+      this.logOrRegPreference.initPre(this.context)
+    }
+  }
+
   build() {
     NavDestination() {
       Column() {
+        /**
+         * Image
+         * */
         Image(ComponentsPictures.LOGIN_COLOR_BACKGROUND)
           .width('90%')
           .rotate({
@@ -62,8 +74,11 @@ export struct LoginPage {
         Image(ComponentsPictures.LOGIN_COLOR_WELCOME_TWO)
           .width(250)
 
-        // 登陆注册按钮
+
         Column({ space: 15 }) {
+          /**
+           * Account
+           * */
           Row() {
             Text('账号')
               .fontSize(20)
@@ -71,15 +86,15 @@ export struct LoginPage {
               .padding({ right: 20 })
               .margin({ left: 10, right: 5 })
               .border({ width: { right: 2 }, color: ComponentsColor.a2 })
-            TextInput({ placeholder: '仅限a~z、A~Z、0~9' , text: $$this.myAccount})
+            TextInput({ placeholder: '仅限a~z、A~Z、0~9', text: $$this.myAccount })
               .backgroundColor(Color.Transparent)
               .maxLength(15)
-              .caretStyle({ width: 3, color: ComponentsColor.a2})
+              .caretStyle({ width: 3, color: ComponentsColor.a2 })
               .onChange((value: string) => {
                 const validAccount = value.replace(/[^a-zA-Z0-9]/g, '');
                 this.myAccount = validAccount;
               })
-              .placeholderFont({ size: 11})
+              .placeholderFont({ size: 11 })
           }
           .backgroundColor(ComponentsColor.a4)
           .width('80%')
@@ -89,6 +104,9 @@ export struct LoginPage {
             .combine(TransitionEffect.move(TransitionEdge.START).animation({ duration: 1000 }))
             .combine(TransitionEffect.translate({ x: 150 })))
 
+          /**
+           * Password
+           * */
           Row() {
             Text('密码')
               .fontSize(20)
@@ -96,14 +114,14 @@ export struct LoginPage {
               .padding({ right: 20 })
               .margin({ left: 10, right: 5 })
               .border({ width: { right: 2 }, color: ComponentsColor.a2 })
-            TextInput({ placeholder: '仅限a~z、A~Z、0~9、*、_' , text: $$this.myPassword})
+            TextInput({ placeholder: '仅限a~z、A~Z、0~9、*、_', text: $$this.myPassword })
               .width(200)
               .backgroundColor(Color.Transparent)
               .maxLength(15)
               .type(InputType.Password)
-              .caretStyle({ width: 3, color: ComponentsColor.a2})
+              .caretStyle({ width: 3, color: ComponentsColor.a2 })
               .showPasswordIcon(true)
-              .placeholderFont({ size: 11})
+              .placeholderFont({ size: 11 })
               .onChange((value: string) => {
                 const validPassword = value.replace(/[^a-zA-Z0-9*_]/g, '');
                 this.myPassword = validPassword;
@@ -117,36 +135,123 @@ export struct LoginPage {
             .combine(TransitionEffect.move(TransitionEdge.END).animation({ duration: 1000 }))
             .combine(TransitionEffect.translate({ x: 150 })))
 
-          Button('登录/注册')
-            .width('80%')
-            .height(50)
-            .backgroundColor(ComponentsColor.a2)
-            .transition(TransitionEffect.translate({ y: 300 }).animation({ duration: 1000 })
-              .combine(TransitionEffect.scale({ x: 0, y: 0 })))
-            .onClick(() => {
-              this.isShown_sea = true
-              this.intervalId = setInterval(() => {
-                this.isShown_dolphin = !this.isShown_dolphin
-                this.isShown_wave_left = !this.isShown_wave_left
-                setTimeout(() => {
-                  this.isShown_wave_right = !this.isShown_wave_right
-                }, 1200)
-              }, 600)
+          /**
+           * logic to login in
+           * */
+          Row({ space: 20 }) {
+            Button('登录')
+              .width('40%')
+              .height(50)
+              .backgroundColor(ComponentsColor.a2)
+              .transition(TransitionEffect.translate({ y: 300 }).animation({ duration: 1000 })
+                .combine(TransitionEffect.scale({ x: 0, y: 0 })))
+              .onClick(() => {
+                if (this.logOrRegPreference.isHasAcc(this.myAccount)
+                  && this.logOrRegPreference.getPsw(this.myAccount) == this.myPassword) {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '登陆成功',
+                    duration: 2000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                  AppStorage.set('curAccount', this.myAccount)
 
-              setTimeout(() => {
-                AppStorage.set('LoginState', true)
-                this.isShown_dolphin = false
-                this.isShown_wave_left = false
-                this.isShown_wave_right = false
-                this.isShown_sea = false
-                clearInterval(this.intervalId)
-                this.intervalId = null
-              }, 5500)
-            })
+                  this.isShown_sea = true
+                  this.intervalId = setInterval(() => {
+                    this.isShown_dolphin = !this.isShown_dolphin
+                    this.isShown_wave_left = !this.isShown_wave_left
+                    setTimeout(() => {
+                      this.isShown_wave_right = !this.isShown_wave_right
+                    }, 1200)
+                  }, 600)
+
+                  setTimeout(() => {
+                    AppStorage.set('LoginState', true)
+                    this.isShown_dolphin = false
+                    this.isShown_wave_left = false
+                    this.isShown_wave_right = false
+                    this.isShown_sea = false
+                    clearInterval(this.intervalId)
+                    this.intervalId = null
+                  }, 5500)
+                } else {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '账号或密码错误',
+                    duration: 2000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                }
+              })
+
+            Button('注册')
+              .width('40%')
+              .height(50)
+              .backgroundColor(ComponentsColor.a2)
+              .transition(TransitionEffect.translate({ y: 300 }).animation({ duration: 1000 })
+                .combine(TransitionEffect.scale({ x: 0, y: 0 })))
+              .onClick(() => {
+                if (this.myAccount.length == 0 || this.myPassword.length == 0) {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '请输入账号或密码',
+                    duration: 2000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                } else if ((this.myAccount.length < 9 || this.myAccount.length > 16)
+                  || (this.myPassword.length < 9 || this.myPassword.length > 16)) {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '账号密码只能设置9~16位',
+                    duration: 2000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                } else if (this.logOrRegPreference.isHasAcc(this.myAccount)) {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '该账号已存在',
+                    duration: 2000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                } else {
+                  this.getUIContext().getPromptAction().showToast({
+                    message: '注册成功',
+                    duration: 1000,
+                    showMode: promptAction.ToastShowMode.DEFAULT,
+                    bottom: 80
+                  })
+                  this.logOrRegPreference.registerAcc(this.myAccount, this.myPassword)
+                  AppStorage.set('curAccount', this.myAccount)
+
+                  this.isShown_sea = true
+                  this.intervalId = setInterval(() => {
+                    this.isShown_dolphin = !this.isShown_dolphin
+                    this.isShown_wave_left = !this.isShown_wave_left
+                    setTimeout(() => {
+                      this.isShown_wave_right = !this.isShown_wave_right
+                    }, 1200)
+                  }, 600)
+
+                  setTimeout(() => {
+                    AppStorage.set('LoginState', true)
+                    this.isShown_dolphin = false
+                    this.isShown_wave_left = false
+                    this.isShown_wave_right = false
+                    this.isShown_sea = false
+                    clearInterval(this.intervalId)
+                    this.intervalId = null
+                  }, 5500)
+                }
+              })
+          }
+          .width('90%')
+          .padding({ left: '10%' })
         }
         .height(180)
 
-        // 加载动画
+        /**
+         * loading animation
+         * */
         Stack({ alignContent: Alignment.Bottom }) {
           if (this.isShown_sea) {
             Divider()

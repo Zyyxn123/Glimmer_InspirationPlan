@@ -14,6 +14,9 @@ export struct BasicData {
 
   build() {
     Column() {
+      /**
+       * 直观：用户学习经历，使用的基本情况
+       * */
       Row({ space: 25 }) {
         ForEach(this.basicInfos, (item: basicInfosType, index: number) => {
           Column({ space: 5 }) {
@@ -29,6 +32,9 @@ export struct BasicData {
         })
       }
 
+      /**
+       * 心情
+       * */
       // Text('+ 心情')
       //   .textAlign(TextAlign.Center)
       //   .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)

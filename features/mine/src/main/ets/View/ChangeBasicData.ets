@@ -29,9 +29,13 @@ export struct ChangeBasicData {
           .width('80%')
           .height(40)
           .onClick(() => {
-            this.modMsg = ''
-            this.para = undefined
-            this.pageInfos.pop()
+            if (this.modMsg) {
+              this.modMsg = ''
+              this.para = { title: 'title', text: 'text', limit: 'limit' }
+              this.pageInfos.pop()
+            } else {
+              this.pageInfos.pop()
+            }
           })
           .margin({ left: 30, top: 60 })
       }
@@ -49,7 +53,7 @@ export struct ChangeBasicData {
     })
     .onBackPressed(() => {
       this.modMsg = ''
-      this.para = undefined
+      this.para = { title: 'title', text: 'text', limit: 'limit' }
       return false
     })
   }

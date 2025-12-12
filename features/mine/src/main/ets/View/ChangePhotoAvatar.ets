@@ -41,10 +41,14 @@ export struct ChangePhotoAvatar {
           .width('60%')
           .height('8%')
           .onClick(() => {
-            this.curSel = -10
-            this.cpaVM.selImg = this.curSelPh
-            this.curSelPh = ''
-            this.pageInfos.pop()
+            if (this.curSelPh) {
+              this.curSel = -10
+              this.cpaVM.selImg = this.curSelPh
+              this.curSelPh = ''
+              this.pageInfos.pop()
+            } else {
+              this.pageInfos.pop()
+            }
           })
       }
       .width('100%')

@@ -28,5 +28,5 @@ export class ComponentsPictures {
   static ICON_LANGUAGE_TRANSFORM: ResourceStr = $r('app.media.icon_language_transform')
   static ICON_SEARCH_FANGFAJING: ResourceStr = $r('app.media.icon_search_fangdajing')
   static ICON_PHONE_SOUND: ResourceStr = $r('app.media.icon_phone_sound')
-    static ICON_TRANSLATION_DELETE: ResourceStr = $r('app.media.shanchuyitiao')
+  static ICON_TRANSLATION_DELETE: ResourceStr = $r('app.media.shanchuyitiao')
 }
