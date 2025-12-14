@@ -7,6 +7,11 @@ export class SettingViewModel {
   private static settingViewModel: SettingViewModel | undefined = undefined
   private  logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
   private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
+  @Trace ph: string = 'app.media.avatar_1th'
+  @Trace account: string = ''
+  @Trace userName: string = '默认用户名'
+  @Trace password: string = ''
+  @Trace signature: string = '该用户还未设置签名'
   @Trace dataList: dataType[] = [
     {
       title: '头像',
@@ -52,36 +57,45 @@ export class SettingViewModel {
   setCurACC() {
     if (AppStorage.get('curAccount') !== undefined) {
       this.dataList[2].text = AppStorage.get('curAccount')!
+      this.account = AppStorage.get('curAccount')!
     }
   }
 
   setPsw() {
     if (AppStorage.get('curAccount') !== undefined) {
       this.dataList[3].text = this.logOrRegPreference.getPsw(AppStorage.get('curAccount')!)
+      this.password = this.logOrRegPreference.getPsw(AppStorage.get('curAccount')!)
     }
   }
 
   setPh() {
     if (this.userBasicMsgPreference.isHasPh()) {
       this.dataList[0].img = this.userBasicMsgPreference.getPh()
+      this.ph = this.userBasicMsgPreference.getPh()
     } else {
       this.dataList[0].img = 'app.media.avatar_1th'
+      this.ph = 'app.media.avatar_1th'
     }
   }
 
   setUserName() {
     if (this.userBasicMsgPreference.isHasUserName()) {
-      this.dataList[0].img = this.userBasicMsgPreference.getUserName()
+      this.dataList[1].text = this.userBasicMsgPreference.getUserName()
+      this.userName = this.userBasicMsgPreference.getUserName()
+      console.log('nodwdwadawd: ', this.dataList[1].text)
     } else {
       this.dataList[1].text = '默认用户名'
+      this.userName = '默认用户名'
     }
   }
 
   setSignature() {
     if (this.userBasicMsgPreference.isHasSignature()) {
-      this.dataList[0].img = this.userBasicMsgPreference.getSignature()
+      this.dataList[4].text = this.userBasicMsgPreference.getSignature()
+      this.signature = this.userBasicMsgPreference.getSignature()
     } else {
       this.dataList[4].text = '该用户还未设置签名'
+      this.signature = '该用户还未设置签名'
     }
   }
 }

@@ -34,6 +34,73 @@ export class LogOrRegPreference {
     }
   }
 
+  setLoginState(bool: boolean) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync('LoginState', bool)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setLoginState flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setLoginState flush successfully')
+      })
+      hilog.info(DOMAIN, TAG, 'myPreference getLoginState: ' + `${bool}`)
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setLoginState check failed')
+    }
+  }
+
+  getLoginState() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return false
+    }
+    try {
+      let bol = this.myPreference.getSync('LoginState', false) as boolean
+      hilog.info(DOMAIN, TAG, 'myPreference getLoginState: ' + `${bol}`)
+      return bol
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference getLoginState check failed')
+      return false
+    }
+  }
+
+  setCurAcc(acc: string) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      let bol = this.myPreference.putSync('curAccount', acc)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAcc flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAcc flush successfully')
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAcc check failed')
+    }
+  }
+
+  getCurAcc() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return ''
+    }
+    try {
+      let strAcc: string = this.myPreference.getSync('curAccount', '') as string
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAcc: ' + strAcc)
+      return strAcc
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference getCurAcc check failed')
+      return ''
+    }
+  }
+
   isHasAcc(account: string): boolean {
     if (!this.myPreference) {
       hilog.info(DOMAIN, TAG, 'myPreference create failed')

@@ -162,33 +162,73 @@ export class UserBasicMsgPreference {
     }
   }
 
-  getAllAcc() {
+  setUserName(name: string) {
     if (!this.myPreference) {
       hilog.info(DOMAIN, TAG, 'myPreference create failed')
       return
     }
     try {
-      let value: object = this.myPreference.getAllSync()
-      let allKeys = getObjKeys(value)
-      hilog.info(DOMAIN, TAG, 'getAll keys = ' + allKeys)
-      hilog.info(DOMAIN, TAG, "getAll object = " + JSON.stringify(value))
+      this.myPreference.putSync(acc + userName, name)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'setUserName flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'setUserName flush successfully')
+      })
     } catch (error) {
-      hilog.error(DOMAIN, TAG, 'myPreference getAllAcc failed')
+      hilog.error(DOMAIN, TAG, 'setUserName putSync failed')
     }
   }
 
-  clearAllAcc() {
+  setSignature(signs: string) {
     if (!this.myPreference) {
       hilog.info(DOMAIN, TAG, 'myPreference create failed')
       return
     }
     try {
-      this.myPreference.clearSync()
-      hilog.info(DOMAIN, TAG, 'myPreference clearSync successfully')
+      this.myPreference.putSync(acc + sign, signs)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'setSignature flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'setSignature flush successfully')
+      })
     } catch (error) {
-      hilog.error(DOMAIN, TAG, 'myPreference getAllAcc failed')
+      hilog.error(DOMAIN, TAG, 'setSignature putSync failed')
     }
   }
+
+  /**
+   * @getAllAcc: get all msg
+   * @clearAllAcc: clear all msg
+   * */
+  // getAllAcc() {
+  //   if (!this.myPreference) {
+  //     hilog.info(DOMAIN, TAG, 'myPreference create failed')
+  //     return
+  //   }
+  //   try {
+  //     let value: object = this.myPreference.getAllSync()
+  //     let allKeys = getObjKeys(value)
+  //     hilog.info(DOMAIN, TAG, 'getAll keys = ' + allKeys)
+  //     hilog.info(DOMAIN, TAG, "getAll object = " + JSON.stringify(value))
+  //   } catch (error) {
+  //     hilog.error(DOMAIN, TAG, 'myPreference getAllAcc failed')
+  //   }
+  // }
+  //
+  // clearAllAcc() {
+  //   if (!this.myPreference) {
+  //     hilog.info(DOMAIN, TAG, 'myPreference create failed')
+  //     return
+  //   }
+  //   try {
+  //     this.myPreference.clearSync()
+  //     hilog.info(DOMAIN, TAG, 'myPreference clearSync successfully')
+  //   } catch (error) {
+  //     hilog.error(DOMAIN, TAG, 'myPreference getAllAcc failed')
+  //   }
+  // }
 }
 
 function getObjKeys(obj: Object): string[] {

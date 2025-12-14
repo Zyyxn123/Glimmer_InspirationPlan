@@ -69,6 +69,10 @@ export struct Setting {
 
                 Row() {
                   Text(item.text)
+                    .width(150)
+                    .maxLines(1)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis})
+                    .textAlign(TextAlign.End)
 
                   Text('>')
                     .fontSize(20)
@@ -105,14 +109,14 @@ export struct Setting {
          * delete account or log out
          * */
         Column() {
-          Button('获取当前所有账号')
-            .onClick(() => {
-              this.logOrRegPreference.getAllAcc()
-            })
-          Button('清空账号')
-            .onClick(() => {
-              this.logOrRegPreference.clearAllAcc()
-            })
+          // Button('获取当前所有账号')
+          //   .onClick(() => {
+          //     this.logOrRegPreference.getAllAcc()
+          //   })
+          // Button('清空账号')
+          //   .onClick(() => {
+          //     this.logOrRegPreference.clearAllAcc()
+          //   })
           Button('注销账号')
             .width('80%')
             .height(40)
@@ -151,6 +155,9 @@ export struct Setting {
                         AppStorage.set('curAccount', '')
                         AppStorage.set('TabsBarHeight_changeToCamera', false)
                         AppStorage.set('LoginState', false)
+
+                        this.logOrRegPreference.setLoginState(false)
+                        this.logOrRegPreference.setCurAcc('')
                       }
                     }],
                 }
@@ -169,6 +176,8 @@ export struct Setting {
               AppStorage.set('curAccount', '')
               AppStorage.set('TabsBarHeight_changeToCamera', false)
               AppStorage.set('LoginState', false)
+              this.logOrRegPreference.setLoginState(false)
+              this.logOrRegPreference.setCurAcc('')
             })
         }
       }

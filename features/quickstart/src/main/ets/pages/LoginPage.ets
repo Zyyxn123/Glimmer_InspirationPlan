@@ -56,6 +56,20 @@ export struct LoginPage {
     if (!this.userBasicMsgPreference.myPreference) {
       this.userBasicMsgPreference.initPre(this.context)
     }
+
+    if (this.logOrRegPreference.getLoginState()) {
+      AppStorage.set('LoginState', this.logOrRegPreference.getLoginState())
+      this.myAccount = this.logOrRegPreference.getCurAcc()
+      AppStorage.set('curAccount', this.myAccount)
+      this.logOrRegPreference.setLoginState(true)
+      this.logOrRegPreference.setCurAcc(this.myAccount)
+      this.settingVM.setCurACC()
+      this.settingVM.setPsw()
+      this.settingVM.setPh()
+      this.settingVM.setUserName()
+      this.settingVM.setSignature()
+      this.cpaVM.getCurPh()
+    }
   }
 
   build() {
@@ -163,6 +177,8 @@ export struct LoginPage {
                     bottom: 80
                   })
                   AppStorage.set('curAccount', this.myAccount)
+                  this.logOrRegPreference.setLoginState(true)
+                  this.logOrRegPreference.setCurAcc(this.myAccount)
                   this.settingVM.setCurACC()
                   this.settingVM.setPsw()
                   this.settingVM.setPh()
@@ -236,6 +252,8 @@ export struct LoginPage {
                   })
                   this.logOrRegPreference.registerAcc(this.myAccount, this.myPassword)
                   AppStorage.set('curAccount', this.myAccount)
+                  this.logOrRegPreference.setLoginState(true)
+                  this.logOrRegPreference.setCurAcc(this.myAccount)
                   this.settingVM.setCurACC()
                   this.settingVM.setPsw()
                   this.settingVM.setPh()
@@ -307,11 +325,11 @@ export struct LoginPage {
         }
         .height(200)
 
-        // 隐私条例
-        Button('快捷登录')
-          .onClick(() => {
-            AppStorage.set('LoginState', true)
-          })
+        // // 隐私条例
+        // Button('快捷登录')
+        //   .onClick(() => {
+        //     AppStorage.set('LoginState', true)
+        //   })
       }
       .width(ComponentsSize.WIDTH_SIZE_MAX)
       .height(ComponentsSize.HEIGHT_SIZE_MAX)
@@ -320,6 +338,5 @@ export struct LoginPage {
     .onReady((context: NavDestinationContext) => {
       this.pageInfo = context.pathStack;
     })
-
   }
 }
