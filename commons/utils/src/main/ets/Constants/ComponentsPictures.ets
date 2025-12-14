@@ -29,4 +29,8 @@ export class ComponentsPictures {
   static ICON_SEARCH_FANGFAJING: ResourceStr = $r('app.media.icon_search_fangdajing')
   static ICON_PHONE_SOUND: ResourceStr = $r('app.media.icon_phone_sound')
   static ICON_TRANSLATION_DELETE: ResourceStr = $r('app.media.shanchuyitiao')
+  static ICON_COLLECTION: ResourceStr = $r('app.media.ic_collection')
+  static ICON_COLLECTION_SELECTED: ResourceStr = $r('app.media.ic_collection_seled')
+  static ICON_LIKE: ResourceStr = $r('app.media.ic_like')
+  static ICON_LIKE_SELECTED: ResourceStr = $r('app.media.ic_like_seled')
 }

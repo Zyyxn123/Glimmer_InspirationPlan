@@ -1,6 +1,6 @@
 import { paramsType } from "./Setting"
 import { JSON } from "@kit.ArkTS"
-import { ComponentsColor } from "utils"
+import { ComponentsColor, UserBasicMsgPreference } from "utils"
 
 @Component
 export struct ChangeBasicData {
@@ -9,6 +9,7 @@ export struct ChangeBasicData {
   @State modMsg: string = ''
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
 
   build() {
     NavDestination() {

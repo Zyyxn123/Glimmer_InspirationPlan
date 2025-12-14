@@ -1,5 +1,7 @@
-import { ComponentsSize, ComponentsColor, ComponentsPictures, LogOrRegPreference } from 'utils'
+import { ComponentsSize, ComponentsColor, ComponentsPictures, LogOrRegPreference, UserBasicMsgPreference } from 'utils'
 import { promptAction } from '@kit.ArkUI';
+import { SettingViewModel } from 'mine';
+import { CPAViewModel } from 'mine/src/main/ets/ViewModel/CPAViewModel';
 
 
 @Builder
@@ -19,7 +21,10 @@ export struct LoginPage {
   @State isShown_sea: boolean = false
   @State myAccount: string = ''
   @State myPassword: string = ''
+  private cpaVM: CPAViewModel = CPAViewModel.Instance()
+  private settingVM: SettingViewModel = SettingViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
   private context: Context = this.getUIContext().getHostContext() as Context
   private intervalId: number | null = null;
   private effect: TransitionEffect = TransitionEffect.asymmetric(
@@ -47,6 +52,9 @@ export struct LoginPage {
   aboutToAppear(): void {
     if (!this.logOrRegPreference.myPreference) {
       this.logOrRegPreference.initPre(this.context)
+    }
+    if (!this.userBasicMsgPreference.myPreference) {
+      this.userBasicMsgPreference.initPre(this.context)
     }
   }
 
@@ -155,6 +163,12 @@ export struct LoginPage {
                     bottom: 80
                   })
                   AppStorage.set('curAccount', this.myAccount)
+                  this.settingVM.setCurACC()
+                  this.settingVM.setPsw()
+                  this.settingVM.setPh()
+                  this.settingVM.setUserName()
+                  this.settingVM.setSignature()
+                  this.cpaVM.getCurPh()
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {
@@ -222,6 +236,12 @@ export struct LoginPage {
                   })
                   this.logOrRegPreference.registerAcc(this.myAccount, this.myPassword)
                   AppStorage.set('curAccount', this.myAccount)
+                  this.settingVM.setCurACC()
+                  this.settingVM.setPsw()
+                  this.settingVM.setPh()
+                  this.settingVM.setUserName()
+                  this.settingVM.setSignature()
+                  this.cpaVM.getCurPh()
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {

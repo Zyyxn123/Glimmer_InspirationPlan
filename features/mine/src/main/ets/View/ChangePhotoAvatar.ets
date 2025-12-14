@@ -1,4 +1,6 @@
+import { UserBasicMsgPreference } from "utils";
 import { CPAViewModel } from "../ViewModel/CPAViewModel"
+import { SettingViewModel } from "../ViewModel/SettingViewModel";
 
 @Component
 export struct ChangePhotoAvatar {
@@ -8,6 +10,8 @@ export struct ChangePhotoAvatar {
   @State curSel: number = -10
   @State curSelPh: string = ''
   private cpaVM: CPAViewModel = CPAViewModel.Instance()
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
+  private settingViewModel: SettingViewModel = SettingViewModel.Instance()
   @State PhAvatar: string[] = this.cpaVM.pa
 
   build() {
@@ -42,8 +46,11 @@ export struct ChangePhotoAvatar {
           .height('8%')
           .onClick(() => {
             if (this.curSelPh) {
+              this.userBasicMsgPreference.setPh(this.curSelPh)
+              this.cpaVM.getCurPh()
+              this.settingViewModel.setPh()
               this.curSel = -10
-              this.cpaVM.selImg = this.curSelPh
+              // this.cpaVM.selImg = this.curSelPh
               this.curSelPh = ''
               this.pageInfos.pop()
             } else {

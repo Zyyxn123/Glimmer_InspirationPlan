@@ -1,5 +1,6 @@
 import { DEFAULT } from '@ohos/hypium'
 import hilog from '@ohos.hilog'
+import { UserBasicMsgPreference } from 'utils'
 
 const TAG: string = '[CPAViewModelTag]'
 const DOMAIN: number = 0x0000
@@ -7,6 +8,7 @@ const DOMAIN: number = 0x0000
 @ObservedV2
 export class CPAViewModel {
   private static cpaViewModel: CPAViewModel | undefined = undefined
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
   @Trace pa: string[] = []
   @Trace selImg: string = ''
 
@@ -30,5 +32,9 @@ export class CPAViewModel {
       hilog.info(DOMAIN, TAG, 'push:' + str + '; now str:' + this.pa[i-1].toString())
       hilog.info(DOMAIN, TAG, 'push:' + str + '; now str:' + this.pa[i-1].toString().substring(17, 18))
     }
+  }
+
+  getCurPh() {
+    this.selImg = this.userBasicMsgPreference.getPh()
   }
 }

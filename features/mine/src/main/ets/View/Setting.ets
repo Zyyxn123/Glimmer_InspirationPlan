@@ -75,12 +75,21 @@ export struct Setting {
                     .margin({ left: 8, right: 10, bottom: 5 })
                 }
                 .onClick(() => {
-                  const params: paramsType = {
-                    title: item.title,
-                    text: item.text,
-                    limit: item.limit
+                  if (item.title == '账号') {
+                    this.getUIContext().getPromptAction().showToast({
+                      message: '账号不可修改',
+                      duration: 2000,
+                      showMode: promptAction.ToastShowMode.DEFAULT,
+                      bottom: 80
+                    })
+                  } else {
+                    const params: paramsType = {
+                      title: item.title,
+                      text: item.text,
+                      limit: item.limit
+                    }
+                    this.pageInfos.pushPath({ name: item.url, param: params })
                   }
-                  this.pageInfos.pushPath({ name: item.url, param: params })
                 })
               }
               .width('100%')

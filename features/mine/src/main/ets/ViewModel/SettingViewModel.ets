@@ -1,21 +1,23 @@
 import { dataType } from "../Model/SettingModel"
 import { CPAViewModel } from "./CPAViewModel"
-
+import { ComponentsColor, LogOrRegPreference, UserBasicMsgPreference } from "utils"
 
 @ObservedV2
 export class SettingViewModel {
   private static settingViewModel: SettingViewModel | undefined = undefined
+  private  logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
   @Trace dataList: dataType[] = [
     {
       title: '头像',
-      img: CPAViewModel.Instance().selImg,
+      img: '',
       text: '',
       url: 'changePhotoAvatar',
       limit: ''
     },
     {
       title: '用户名',
-      text: '用户名',
+      text: '默认用户名',
       url: 'changeBasicData',
       limit: ''
     },
@@ -33,7 +35,7 @@ export class SettingViewModel {
     },
     {
       title: '个性签名',
-      text: '个性签名',
+      text: '该用户还未设置签名',
       url: 'changeBasicData',
       limit: '签名限制: 仅限50个字'
     },
@@ -45,5 +47,41 @@ export class SettingViewModel {
     }
     SettingViewModel.settingViewModel = new SettingViewModel()
     return SettingViewModel.settingViewModel
+  }
+
+  setCurACC() {
+    if (AppStorage.get('curAccount') !== undefined) {
+      this.dataList[2].text = AppStorage.get('curAccount')!
+    }
+  }
+
+  setPsw() {
+    if (AppStorage.get('curAccount') !== undefined) {
+      this.dataList[3].text = this.logOrRegPreference.getPsw(AppStorage.get('curAccount')!)
+    }
+  }
+
+  setPh() {
+    if (this.userBasicMsgPreference.isHasPh()) {
+      this.dataList[0].img = this.userBasicMsgPreference.getPh()
+    } else {
+      this.dataList[0].img = 'app.media.avatar_1th'
+    }
+  }
+
+  setUserName() {
+    if (this.userBasicMsgPreference.isHasUserName()) {
+      this.dataList[0].img = this.userBasicMsgPreference.getUserName()
+    } else {
+      this.dataList[1].text = '默认用户名'
+    }
+  }
+
+  setSignature() {
+    if (this.userBasicMsgPreference.isHasSignature()) {
+      this.dataList[0].img = this.userBasicMsgPreference.getSignature()
+    } else {
+      this.dataList[4].text = '该用户还未设置签名'
+    }
   }
 }
