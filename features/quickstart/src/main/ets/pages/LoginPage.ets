@@ -1,4 +1,11 @@
-import { ComponentsSize, ComponentsColor, ComponentsPictures, LogOrRegPreference, UserBasicMsgPreference } from 'utils'
+import {
+  ComponentsSize,
+  ComponentsColor,
+  ComponentsPictures,
+  LogOrRegPreference,
+  UserBasicMsgPreference,
+  UserMsgRDBStore
+} from 'utils'
 import { promptAction } from '@kit.ArkUI';
 import { SettingViewModel } from 'mine';
 import { CPAViewModel } from 'mine/src/main/ets/ViewModel/CPAViewModel';
@@ -21,6 +28,7 @@ export struct LoginPage {
   @State isShown_sea: boolean = false
   @State myAccount: string = ''
   @State myPassword: string = ''
+  @State isAbleToButton: boolean = true
   private cpaVM: CPAViewModel = CPAViewModel.Instance()
   private settingVM: SettingViewModel = SettingViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
@@ -48,6 +56,7 @@ export struct LoginPage {
       .combine(TransitionEffect.scale({ x: 0, y: 0 }))
       .combine(TransitionEffect.translate({ y: 10 }))
   )
+  private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
 
   aboutToAppear(): void {
     if (!this.logOrRegPreference.myPreference) {
@@ -58,17 +67,49 @@ export struct LoginPage {
     }
 
     if (this.logOrRegPreference.getLoginState()) {
-      AppStorage.set('LoginState', this.logOrRegPreference.getLoginState())
-      this.myAccount = this.logOrRegPreference.getCurAcc()
-      AppStorage.set('curAccount', this.myAccount)
-      this.logOrRegPreference.setLoginState(true)
-      this.logOrRegPreference.setCurAcc(this.myAccount)
-      this.settingVM.setCurACC()
-      this.settingVM.setPsw()
-      this.settingVM.setPh()
-      this.settingVM.setUserName()
-      this.settingVM.setSignature()
-      this.cpaVM.getCurPh()
+      this.isAbleToButton = false
+      this.getUIContext().getPromptAction().showToast({
+        message: '正在登陆中',
+        duration: 5000,
+        showMode: promptAction.ToastShowMode.DEFAULT,
+        bottom: 80
+      })
+
+      this.isShown_sea = true
+      this.intervalId = setInterval(() => {
+        // if (!this.userMsgRDBStore.MsgLists) {
+        //   this.userMsgRDBStore.queryMsg_row()
+        // }
+        this.isShown_dolphin = !this.isShown_dolphin
+        this.isShown_wave_left = !this.isShown_wave_left
+        setTimeout(() => {
+          this.isShown_wave_right = !this.isShown_wave_right
+        }, 1200)
+      }, 600)
+
+      setTimeout(() => {
+        AppStorage.set('LoginState', this.logOrRegPreference.getLoginState())
+        this.myAccount = this.logOrRegPreference.getCurAcc()
+        AppStorage.set('curAccount', this.myAccount)
+        this.logOrRegPreference.setLoginState(true)
+        this.logOrRegPreference.setCurAcc(this.myAccount)
+        this.settingVM.setCurACC()
+        this.settingVM.setPsw()
+        this.settingVM.setPh()
+        this.settingVM.setUserName()
+        this.settingVM.setSignature()
+        this.cpaVM.getCurPh()
+        this.userMsgRDBStore.queryMsg_row(this.myAccount)
+
+        this.isAbleToButton = true
+        AppStorage.set('LoginState', true)
+        this.isShown_dolphin = false
+        this.isShown_wave_left = false
+        this.isShown_wave_right = false
+        this.isShown_sea = false
+        clearInterval(this.intervalId)
+        this.intervalId = null
+      }, 5500)
     }
   }
 
@@ -185,6 +226,7 @@ export struct LoginPage {
                   this.settingVM.setUserName()
                   this.settingVM.setSignature()
                   this.cpaVM.getCurPh()
+                  this.userMsgRDBStore.queryMsg_row(this.myAccount)
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {
@@ -213,6 +255,7 @@ export struct LoginPage {
                   })
                 }
               })
+              .enabled(this.isAbleToButton ? true : false)
 
             Button('注册')
               .width('40%')
@@ -260,6 +303,7 @@ export struct LoginPage {
                   this.settingVM.setUserName()
                   this.settingVM.setSignature()
                   this.cpaVM.getCurPh()
+                  this.userMsgRDBStore.queryMsg_row(this.myAccount)
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {
@@ -281,6 +325,7 @@ export struct LoginPage {
                   }, 5500)
                 }
               })
+              .enabled(this.isAbleToButton ? true : false)
           }
           .width('90%')
           .padding({ left: '10%' })

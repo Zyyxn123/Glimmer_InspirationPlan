@@ -83,8 +83,10 @@ export default struct photo_translation {
                   .margin({ bottom: 5})
                   .maxLines(this.maxLines)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
+                  .copyOption(CopyOptions.LocalDevice)
               }
               .width('100%')
+              .padding(15)
               .border({width: {bottom: 1}, color: Color.Black, radius: { bottomLeft: 15, bottomRight: 15}})
               .onClick(() => {
                 this.maxLines = this.maxLines == 2 ? -1 : 2
@@ -92,6 +94,8 @@ export default struct photo_translation {
 
               Text(HTTPForZhToEn.myData_tran)
                 .margin({ top: 15})
+                .copyOption(CopyOptions.LocalDevice)
+                .padding(15)
             } else {
               LoadingProgress()
                 .width(50)

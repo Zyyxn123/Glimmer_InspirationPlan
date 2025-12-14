@@ -14,8 +14,12 @@ import { HTTPForRandomPoetry } from '../HTTP/HTTPForRandomPoetry'
 import { HTTPForZhToEn } from '../HTTP/HTTPForZhToEn'
 import hilog from '@ohos.hilog'
 import { PlayerForPronunciation } from '../AVplayer/PlayerForPronunciation'
+import { myHistoryViewModel } from '../ViewModel/myHistoryViewModel'
+import { JSON } from '@kit.ArkTS'
 
 // import { SpeechToSpeech } from '../HTTP/HTTPForTranslation'
+
+
 
 @Component
 export struct MainFuc {
@@ -31,6 +35,7 @@ export struct MainFuc {
   @State isUploading: boolean = true
   @Prop lanFrom: string = 'zh-Hans'
   @Prop lanTo: string = 'en'
+  private myHistoryVM: myHistoryViewModel = myHistoryViewModel.Instance()
 
   aboutToAppear(): void {
     this.lanFrom = 'zh-Hans'
@@ -250,10 +255,10 @@ export struct MainFuc {
                     Row({ space: 20 }) {
                       Text() {
                         ForEach(item.Hwds as HwdsType[], (i: HwdsType, index: number) => {
-                          Span(i.hwd)
+                          Span(i.hwd + '\n')
                             .fontSize(18)
                             .fontWeight(400)
-                          Span('\n' + item.Pos + '. ' + i.tran)
+                          Span(item.Pos + '. ' + i.tran + '\n')
                             .margin({ top: 4 })
                         })
 
@@ -489,6 +494,8 @@ export struct MainFuc {
 
                 this.intervalId_two = setInterval(() => {
                   if (HTTPForEnglishWordToChinese.myData) {
+                    this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
+                      JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
                     this.isUploading = false
                     clearInterval(this.intervalId_two)
                     this.intervalId_two = null
@@ -540,6 +547,8 @@ export struct MainFuc {
 
                       this.intervalId_three = setInterval(() => {
                         if (HTTPForEnglishWordToChinese.myData) {
+                          this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
+                            JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
                           hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(HTTPForEnglishWordToChinese.myData))
                           this.isUploading = false
                           clearInterval(this.intervalId_three)

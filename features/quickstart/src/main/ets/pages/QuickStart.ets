@@ -1,5 +1,7 @@
+import { UserMsgRDBStore } from 'utils';
 import { LoginPage } from './LoginPage'
 import { MainPage } from './MainPage';
+import { common } from '@kit.AbilityKit';
 
 AppStorage.setOrCreate('LoginState', false)
 AppStorage.setOrCreate('curAccount', '')
@@ -10,9 +12,11 @@ export struct QuickStart {
   @StorageProp('topRectHeight') topRectHeight: number = 0;
   @StorageLink('LoginState') loginState: boolean = false
   @StorageLink('PageInfos') pageInfo: NavPathStack = new NavPathStack();
+  private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
+  private context: common.Context = this.getUIContext().getHostContext() as common.Context
 
   aboutToAppear(): void {
-
+    this.userMsgRDBStore.getInit(this.context)
   }
 
   build() {

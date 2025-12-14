@@ -139,6 +139,7 @@ export struct ChangeLanguage {
             this.lanFrom = 'en'
             this.lanTo = 'zh-Hans'
           }
+          AppStorage.set('lanTo', this.lanTo)
         })
 
       Text(this.languageTo)
