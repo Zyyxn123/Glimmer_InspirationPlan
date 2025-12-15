@@ -32,6 +32,7 @@ export class HTTPForEnglishWordToChinese {
         let tran: HTTPForEnglishWordToChineseType = JSON.parse(data.result.toString()) as HTTPForEnglishWordToChineseType
         HTTPForEnglishWordToChinese.myData = tran
 
+        hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran))
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.code))
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.msg))
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.word))

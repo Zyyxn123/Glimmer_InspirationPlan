@@ -63,6 +63,8 @@ export class UserMsgRDBStore {
           }
           hilog.info(DOMAIN, TAG, `Insert is successful, rowId = ${rowId}`)
         });
+    } else {
+      hilog.error(DOMAIN, TAG, 'InsertMsg_row myRDBStoreIns is undefined')
     }
   }
 
@@ -70,11 +72,11 @@ export class UserMsgRDBStore {
 
   }
 
-  deleteMsg_row(acc: string, msg: string) {
+  deleteMsg_row(acc: string/*, msg: string*/) {
     let predicates1 = new relationalStore.RdbPredicates(this.TableName);
     predicates1.equalTo('ACC', acc)
-      .and()
-      .equalTo('MSG', msg)
+      // .and()
+      // .equalTo('MSG', msg)
     if (this.myRDBStoreIns !== undefined) {
       (this.myRDBStoreIns as relationalStore.RdbStore).delete(predicates1, (err: BusinessError, rows: number) => {
         if (err) {
@@ -114,8 +116,9 @@ export class UserMsgRDBStore {
             resultSet.close();
           } catch (error) {}
         })
+    } else {
+      hilog.error(DOMAIN, TAG, 'queryMsg_row myRDBStoreIns is undefined')
     }
-    hilog.error(DOMAIN, TAG, 'queryMsg_row myRDBStoreIns is undefined')
   }
 }
 

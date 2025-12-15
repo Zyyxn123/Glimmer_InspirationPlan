@@ -5,14 +5,30 @@ import { HTTPForEnglishWordToChineseType, translationsType } from "../HTTP/HTTPF
 
 @Component
 export struct myHistoryItem {
-  @State items: myHistoryItemType | undefined = undefined
-  @State iPos: string = ''
-  @State iTran: string = ''
+  @State items: myHistoryItemType = { ilanFrom: 'k', ilanTo: 'k', ititle: '示例', itext: 'example', iisCollection: false}
+  @State iPos: string = 'n'
+  @State iTran: string = 'example'
 
   aboutToAppear(): void {
-    let i = JSON.parse(this.items?.itext) as HTTPForEnglishWordToChineseType
-    this.iPos = i.data.translations[0].pos
-    this.iTran = i.data.translations[0].tran_cn
+    if (this.items.itext !== 'example') {
+      let i = JSON.parse(this.items!.itext) as HTTPForEnglishWordToChineseType
+        if (this.items?.ilanTo == 'en') {
+          this.iPos = i.data.synonyms[0].pos
+          let tmp: string = ''
+          for (let j = 0; j < i.data.synonyms[0].Hwds.length; j++) {
+            const element = i.data.synonyms[0].Hwds[j].word;
+            if (j !== i.data.synonyms[0].Hwds.length - 1) {
+              tmp += element + ', '
+            } else {
+              tmp += element + '.'
+            }
+          }
+          this.iTran = tmp
+        } else {
+      this.iPos = i.data.translations[0].pos
+      this.iTran = i.data.translations[0].tran_cn
+        }
+    }
   }
 
   build() {

@@ -7,7 +7,15 @@ const TAG: string = '[myHistoryViewModelTag]'
 
 @ObservedV2
 export class myHistoryViewModel {
-  @Trace itemLists: myHistoryItemType[] = []
+  @Trace itemLists: myHistoryItemType[] = [
+    {
+      ilanFrom: 'k',
+      ilanTo: 'k',
+      ititle: '示例',
+      itext: 'example',
+      iisCollection: false
+    }
+  ]
   private static myHisVM: myHistoryViewModel | undefined = undefined
   private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
   private inputMsg: myHistoryItemType | undefined = undefined
@@ -24,13 +32,14 @@ export class myHistoryViewModel {
   getAllHistoryMsg() {
     // this.userMsgRDBStore.queryMsg_row(this.curACCount)
     let msg: resSetType[] = this.userMsgRDBStore.MsgLists as resSetType[]
-      console.log('awfawfawfawfawf: length', msg.length.toString())
-      console.log('awfawfawfawfawf: lengths', this.userMsgRDBStore.MsgLists.length.toString())
+    console.log('awfawfawfawfawf: length', msg.length.toString())
+    console.log('awfawfawfawfawf: lengths', this.userMsgRDBStore.MsgLists.length.toString())
     for (let i = 0; i < msg.length; i++) {
       let itemStr = msg[i].msg
       console.log('awfawfawfawfawf', itemStr)
       let item = JSON.parse(itemStr) as myHistoryItemType
       this.itemLists.push(item)
+      console.log('列表值: ', this.itemLists[i].itext)
     }
   }
 
