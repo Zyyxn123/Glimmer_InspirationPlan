@@ -497,6 +497,7 @@ export struct MainFuc {
                     if (HTTPForEnglishWordToChinese.myData && HTTPForEnglishWordToChinese.myData.code == '200') {
                       this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
                         JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
+                      AppStorage.set('totalSearchNum',  (AppStorage.get('totalSearchNum') as number) + 1)
                       this.isUploading = false
                       clearInterval(this.intervalId_two)
                       this.intervalId_two = null
@@ -551,6 +552,7 @@ export struct MainFuc {
                         if (HTTPForEnglishWordToChinese.myData && HTTPForEnglishWordToChinese.myData.code == '200') {
                           this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
                             JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
+                          AppStorage.set('totalSearchNum',  (AppStorage.get('totalSearchNum') as number) + 1)
                           hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(HTTPForEnglishWordToChinese.myData))
                           this.isUploading = false
                           clearInterval(this.intervalId_three)

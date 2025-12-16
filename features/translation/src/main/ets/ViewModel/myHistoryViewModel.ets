@@ -22,6 +22,9 @@ export class myHistoryViewModel {
   }
 
   getAllHistoryMsg() {
+    if (this.itemLists.length !== 0) {
+      this.itemLists = []
+    }
     // this.userMsgRDBStore.queryMsg_row(this.curACCount)
     let msg: resSetType[] = this.userMsgRDBStore.MsgLists as resSetType[]
     console.log('awfawfawfawfawf: length', msg.length.toString())

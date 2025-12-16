@@ -11,6 +11,7 @@ export struct DailyEnglish {
   @State DE: httpRequestForDailyEnglishType | undefined = undefined
   /*@Consume('DailyEnglish')*/
   @State DEW: HTTPForDailyEnglishWordType | undefined = undefined
+  @State angleNum: number = 0
   @Consume('mine_pageStack') pageInfos: NavPathStack
   @StorageProp('bottomRectHeight') bottomRectHeight: number = 0;
   @StorageProp('topRectHeight') topRectHeight: number = 0;
@@ -57,9 +58,28 @@ export struct DailyEnglish {
               .width(25)
               .margin({ right: 15, top: 10, bottom: 10 })
               .onClick(() => {
+                this.getUIContext()?.animateTo({
+                  duration: 500,
+                  curve: Curve.Linear,
+                  playMode: PlayMode.Normal,
+                  onFinish: () => {
+                    console.info('play end');
+                  }
+                }, () => {
+                  this.angleNum = this.angleNum == 0 ? 360 : 0
+                })
                 this.httpForDailyEnglishWord.DEW = undefined
                 this.httpForDailyEnglishWord.httpRequestForDailyEnglishWord()
                 this.DEW = this.httpForDailyEnglishWord.DEW
+                AppStorage.set('totalStudyNum',  (AppStorage.get('totalStudyNum') as number) + 1)
+              })
+              .rotate({
+                x: 0,
+                y: 0,
+                z: 1,
+                centerX: '50%',
+                centerY: '50%',
+                angle: this.angleNum
               })
           }
           .width('100%')
@@ -140,9 +160,13 @@ export struct DailyEnglish {
                     .width(260)
                   } else {
                     LoadingProgress()
-                      .width(60)
+                      .width(55)
                   }
                 }
+                .alignItems(HorizontalAlign.Center)
+                .justifyContent(FlexAlign.Center)
+                .width(280)
+                .height(280)
               }
             }
             .scrollBar(BarState.Off)

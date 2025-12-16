@@ -167,6 +167,125 @@ export class LogOrRegPreference {
     }
   }
 
+  deleteMsg() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalSearchNum')
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalStudyNum')
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalLivenessPer')
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference deleteMsg flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference deleteMsg flush successfully')
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference deleteMsg failed: ' + JSON.stringify(error))
+    }
+  }
+
+  setCurAccTotalSearchNum(num: number) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'totalSearchNum', num)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalSearchNum flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAccTotalSearchNum flush successfully: ' + num.toString())
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalSearchNum putSync failed')
+    }
+  }
+
+  setCurAccTotalStudyNum(num: number) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'totalStudyNum', num)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalStudyNum flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAccTotalStudyNum flush successfully: ' + num.toString())
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalStudyNum putSync failed')
+    }
+  }
+
+  setCurAccTotalLivenessPer(num: number) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'totalLivenessPer', num)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalLivenessPer flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAccTotalLivenessPer flush successfully: ' + num.toString())
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAccTotalLivenessPer putSync failed')
+    }
+  }
+
+  getCurAccTotalLivenessPer() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return 0
+    }
+    try {
+      let strPsw: number = this.myPreference.getSync(AppStorage.get('curAccount') + 'totalLivenessPer', 0) as number
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAccTotalLivenessPer: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference account check failed')
+      return 0
+    }
+  }
+
+  getCurAccTotalStudyNum() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return 0
+    }
+    try {
+      let strPsw: number = this.myPreference.getSync(AppStorage.get('curAccount') + 'totalStudyNum', 0) as number
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAccTotalStudyNum: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference account check failed')
+      return 0
+    }
+  }
+
+  getCurAccTotalSearchNum() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return 0
+    }
+    try {
+      let strPsw: number = this.myPreference.getSync(AppStorage.get('curAccount') + 'totalSearchNum', 0) as number
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAccTotalSearchNum: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference account check failed')
+      return 0
+    }
+  }
+
   getAllAcc() {
     if (!this.myPreference) {
       hilog.info(DOMAIN, TAG, 'myPreference create failed')

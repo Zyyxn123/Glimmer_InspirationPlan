@@ -115,7 +115,6 @@ export struct MinePage {
       .height('100%')
     }
     .navDestination(this.pageMaps)
-
   }
 }
 

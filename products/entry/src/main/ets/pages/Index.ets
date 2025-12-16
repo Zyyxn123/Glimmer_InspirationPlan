@@ -8,6 +8,14 @@ struct Index {
 
   aboutToAppear(): void {
     AppStorage.setOrCreate('curAccount', this.logOrRegPreference.getCurAcc())
+    AppStorage.setOrCreate('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
+    AppStorage.setOrCreate('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
+    AppStorage.setOrCreate('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer())
+  }
+  aboutToDisappear(): void {
+    this.logOrRegPreference.setCurAccTotalSearchNum(AppStorage.get('totalSearchNum')!)
+    this.logOrRegPreference.setCurAccTotalStudyNum(AppStorage.get('totalStudyNum')!)
+    this.logOrRegPreference.setCurAccTotalLivenessPer(AppStorage.get('totalLivenessPer')!)
   }
 
   build() {

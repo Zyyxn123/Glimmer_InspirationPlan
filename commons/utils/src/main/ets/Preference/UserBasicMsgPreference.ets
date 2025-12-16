@@ -128,23 +128,23 @@ export class UserBasicMsgPreference {
     }
   }
 
-  registerAcc(account: string, password: string) {
-    if (!this.myPreference) {
-      hilog.info(DOMAIN, TAG, 'myPreference create failed')
-      return
-    }
-    try {
-      this.myPreference.putSync(account, password)
-      this.myPreference.flush((err) => {
-        if (err) {
-          hilog.error(DOMAIN, TAG, 'myPreference registerAcc flush failed')
-        }
-        hilog.info(DOMAIN, TAG, 'myPreference registerAcc flush successfully')
-      })
-    } catch (error) {
-      hilog.error(DOMAIN, TAG, 'myPreference registerAcc putSync failed')
-    }
-  }
+  // registerAcc(account: string, password: string) {
+  //   if (!this.myPreference) {
+  //     hilog.info(DOMAIN, TAG, 'myPreference create failed')
+  //     return
+  //   }
+  //   try {
+  //     this.myPreference.putSync(account, password)
+  //     this.myPreference.flush((err) => {
+  //       if (err) {
+  //         hilog.error(DOMAIN, TAG, 'myPreference registerAcc flush failed')
+  //       }
+  //       hilog.info(DOMAIN, TAG, 'myPreference registerAcc flush successfully')
+  //     })
+  //   } catch (error) {
+  //     hilog.error(DOMAIN, TAG, 'myPreference registerAcc putSync failed')
+  //   }
+  // }
 
   setPh(uri: string) {
     if (!this.myPreference) {
@@ -199,6 +199,21 @@ export class UserBasicMsgPreference {
       })
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'setSignature putSync failed')
+    }
+  }
+
+  deletePreference() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + ph)
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + userName)
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + sign)
+      this.myPreference.flushSync()
+    } catch (err) {
+      hilog.error(DOMAIN, TAG, 'setPh deletePreference failed')
     }
   }
 

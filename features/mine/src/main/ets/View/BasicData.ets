@@ -3,16 +3,20 @@ import { BasicDataViewModel } from "../ViewModel/BasicDataViewModel"
 
 interface basicInfosType {
   text: string
-  nums: number
+  nums: string
 }
 
 @Component
 export struct BasicData {
   private basicDataVM: BasicDataViewModel = BasicDataViewModel.Instance()
+  @State appreciateValue: number = (AppStorage.get('totalSearchNum')! as number) + (AppStorage.get('totalStudyNum')! as number) * 2
+  @State livenessNum: number = ((AppStorage.get('totalLivenessPer')! as number) / 5 * 100) <= 100
+    ? (AppStorage.get('totalLivenessPer')! as number) / 5 * 100 : 100
+  @State livenessStr: string = this.livenessNum + '%'
   @State basicInfos: basicInfosType[] = [
-    { text: '赞赏值', nums: 4325 },// 打卡一个得到2分
-    { text: '收藏', nums: this.basicDataVM.itemLists.length - 1 },
-    { text: '喜欢', nums: 7 },]// 喜欢的每日英语的词语或句子
+    { text: '赞赏值', nums: this.appreciateValue.toString() },// 打卡一个得到2分
+    { text: '收藏', nums: (this.basicDataVM.itemLists.length - 1).toString() },
+    { text: '活跃度', nums: this.livenessStr },]// 喜欢的每日英语的词语或句子
   build() {
     Column() {
       /**

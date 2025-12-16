@@ -2,6 +2,7 @@ import { paramsType } from "./Setting"
 import { JSON } from "@kit.ArkTS"
 import { ComponentsColor, ComponentsPictures, LogOrRegPreference, UserBasicMsgPreference } from "utils"
 import { SettingViewModel } from "../ViewModel/SettingViewModel"
+import { promptAction } from "@kit.ArkUI"
 
 @Component
 export struct ChangeBasicData {
@@ -20,24 +21,38 @@ export struct ChangeBasicData {
       console.log('要修改的用户名是：' + msg)
       this.userBasicMsgPreference.setUserName(msg)
       this.settingViewModel.setUserName()
+      return true
     } else if (this.para!.title == '个性签名') {
       this.userBasicMsgPreference.setSignature(msg)
       this.settingViewModel.setSignature()
+      return true
     } else if (this.para!.title == '密码') {
-      console.log('要修改的密码是：' + msg)
-      this.logOrRegPreference.registerAcc(AppStorage.get('curAccount')!, msg)
-      this.settingViewModel.setPsw()
+      if ((msg.length < 9 || msg.length > 16)) {
+        this.getUIContext().getPromptAction().showToast({
+          message: '密码只能设置9~16位',
+          duration: 1500,
+          showMode: promptAction.ToastShowMode.DEFAULT,
+          bottom: 80
+        })
+        return false
+      } else {
+        console.log('要修改的密码是：' + msg)
+        this.logOrRegPreference.registerAcc(AppStorage.get('curAccount')!, msg)
+        this.settingViewModel.setPsw()
+        return true
+      }
     }
+    return false
   }
 
   build() {
     NavDestination() {
-      Column({ space: 10}) {
+      Column({ space: 10 }) {
         Row() {
-          TextInput({ placeholder: this.para!.text, text: $$this.modMsg})
+          TextInput({ placeholder: this.para!.text, text: $$this.modMsg })
             .height(40)
             .width('85%')
-            .border({ width: 1, radius: 15, color: Color.Black})
+            .border({ width: 1, radius: 15, color: Color.Black })
             .placeholderColor('#ccc')
 
           Image(ComponentsPictures.ICON_TRANSLATION_DELETE)
@@ -65,10 +80,12 @@ export struct ChangeBasicData {
           .onClick(() => {
             if (this.modMsg) {
               console.log('要修改的密码是Button：' + this.modMsg)
-              this.selFucToStore(this.modMsg)
-              this.modMsg = ''
-              this.para = { title: 'title', text: 'text', limit: 'limit' }
-              this.pageInfos.pop()
+              let bool: Boolean = this.selFucToStore(this.modMsg)
+              if (bool) {
+                this.modMsg = ''
+                this.para = { title: 'title', text: 'text', limit: 'limit' }
+                this.pageInfos.pop()
+              }
             } else {
               this.pageInfos.pop()
             }

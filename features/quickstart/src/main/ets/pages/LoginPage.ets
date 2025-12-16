@@ -100,6 +100,9 @@ export struct LoginPage {
         this.settingVM.setSignature()
         this.cpaVM.getCurPh()
         this.userMsgRDBStore.queryMsg_row(this.myAccount)
+        AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
+        AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
+        AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
 
         this.isAbleToButton = true
         AppStorage.set('LoginState', true)
@@ -227,6 +230,9 @@ export struct LoginPage {
                   this.settingVM.setSignature()
                   this.cpaVM.getCurPh()
                   this.userMsgRDBStore.queryMsg_row(this.myAccount)
+                  AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
+                  AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
+                  AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {
@@ -304,6 +310,9 @@ export struct LoginPage {
                   this.settingVM.setSignature()
                   this.cpaVM.getCurPh()
                   this.userMsgRDBStore.queryMsg_row(this.myAccount)
+                  AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
+                  AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
+                  AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {

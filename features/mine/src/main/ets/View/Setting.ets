@@ -1,4 +1,4 @@
-import { ComponentsColor, LogOrRegPreference, UserBasicMsgPreference } from "utils"
+import { ComponentsColor, LogOrRegPreference, UserBasicMsgPreference, UserMsgRDBStore } from "utils"
 import { dataType } from "../Model/SettingModel"
 import { CPAViewModel } from "../ViewModel/CPAViewModel"
 import { SettingViewModel } from "../ViewModel/SettingViewModel"
@@ -20,6 +20,7 @@ export struct Setting {
   private settingVM: SettingViewModel = SettingViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
   private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
+  private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
   private context: Context = this.getUIContext().getHostContext() as Context
 
   aboutToAppear(): void {
@@ -72,7 +73,7 @@ export struct Setting {
                   Text(item.text)
                     .width(150)
                     .maxLines(1)
-                    .textOverflow({ overflow: TextOverflow.Ellipsis})
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
                     .textAlign(TextAlign.End)
 
                   Text('>')
@@ -151,15 +152,20 @@ export struct Setting {
                           showMode: promptAction.ToastShowMode.DEFAULT,
                           bottom: 80
                         })
+                        this.userBasicMsgPreference.setPh('app.media.avatar_1th')
+                        this.userBasicMsgPreference.setUserName('默认用户名')
+                        this.userBasicMsgPreference.setSignature('该用户还未设置签名')
+                        this.userMsgRDBStore.deleteMsg_row(AppStorage.get('curAccount'))
+                        this.userMsgRDBStore.MsgLists = []
+                        this.userBasicMsgPreference.deletePreference()
+                        this.logOrRegPreference.deleteMsg()
+
                         let acc: string = AppStorage.get('curAccount')
                         this.logOrRegPreference.deleteAcc(acc)
                         AppStorage.set('curAccount', '')
                         AppStorage.set('TabsBarHeight_changeToCamera', false)
                         AppStorage.set('LoginState', false)
 
-                        this.userBasicMsgPreference.setPh('app.media.avatar_1th')
-                        this.userBasicMsgPreference.setUserName('默认用户名')
-                        this.userBasicMsgPreference.setSignature('该用户还未设置签名')
                         this.logOrRegPreference.setLoginState(false)
                         this.logOrRegPreference.setCurAcc('')
                       }
@@ -180,6 +186,7 @@ export struct Setting {
               AppStorage.set('curAccount', '')
               AppStorage.set('TabsBarHeight_changeToCamera', false)
               AppStorage.set('LoginState', false)
+              this.userMsgRDBStore.MsgLists = []
               this.logOrRegPreference.setLoginState(false)
               this.logOrRegPreference.setCurAcc('')
             })

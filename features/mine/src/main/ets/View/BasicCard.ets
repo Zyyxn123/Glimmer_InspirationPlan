@@ -4,8 +4,8 @@ import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
 export struct BasicCard {
   @State basicCardsMsg: basicCardsMsgType[] =
     [{ title: '签到天数', text: 2 },
-      { title: '累计学习', text: 1 }, // 每日英语打卡总共次数
-      { title: '累计查询', text: 0 },
+      { title: '累计学习', text: AppStorage.get('totalStudyNum')! }, // 每日英语打卡总共次数
+      { title: '累计查询', text: AppStorage.get('totalSearchNum')! },
       { title: '坚持天数', text: 2 },]
 
   build() {
