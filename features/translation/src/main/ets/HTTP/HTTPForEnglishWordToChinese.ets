@@ -45,14 +45,14 @@ export class HTTPForEnglishWordToChinese {
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.relWords)) // 同根词
         hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(tran.data.ukspeech))
 
-        httpRequest.destroy();
+        httpRequest.destroy()
       } else {
-        console.error('error:' + JSON.stringify(err));
-        httpRequest.off('headersReceive');
-        httpRequest.destroy();
+        console.error('error:' + JSON.stringify(err))
+        httpRequest.off('headersReceive')
+        httpRequest.destroy()
       }
     }
-    );
+    )
   }
 }
 

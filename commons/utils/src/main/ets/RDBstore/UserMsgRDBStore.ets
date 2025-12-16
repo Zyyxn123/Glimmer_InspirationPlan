@@ -68,8 +68,44 @@ export class UserMsgRDBStore {
     }
   }
 
-  upDateAge(age: string) {
+  upDateCollectionState(acc: string, oldMsg: string /*, newMsg: string*/) {
+    let predicates1 = new relationalStore.RdbPredicates(this.TableName);
+    predicates1.equalTo('MSG', oldMsg)
+      .and()
+      .equalTo('ACC', acc)
 
+    let newMsg = oldMsg
+    if (newMsg.slice(-6, -1) == 'false') {
+      let tmp = (JSON.parse(newMsg) as myHistoryItemType)
+      tmp.iisCollection = true
+      newMsg = JSON.stringify(tmp)
+      // newMsg
+      hilog.info(DOMAIN, TAG, 'newMsg.slice(-6, -1) == \'false\':' + JSON.stringify(JSON.parse(newMsg)))
+      hilog.info(DOMAIN, TAG, 'newMsg.slice(-6, -1) == \'false\':' + JSON.stringify(tmp))
+    } else if (newMsg.slice(-5, -1) == 'true') {
+      let tmp = (JSON.parse(newMsg) as myHistoryItemType)
+      tmp.iisCollection = false
+      newMsg = JSON.stringify(tmp)
+    }
+    let VB: relationalStore.ValuesBucket = {
+      ACC: acc,
+      MSG: newMsg
+    }
+    // hilog.info(DOMAIN, TAG, `update rows: ${oldMsg == newMsg}`)
+    hilog.info(DOMAIN, TAG, `oldMsg length: ${oldMsg.length}`);
+    // hilog.info(DOMAIN, TAG, `newMsg length: ${newMsg.length}`);
+    if (this.myRDBStoreIns !== undefined) {
+      (this.myRDBStoreIns as relationalStore.RdbStore).update(VB, predicates1, (err: BusinessError, rows: number) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, `Failed to update data, code is ${err.code},message is ${err.message}`)
+          return;
+        }
+        hilog.info(DOMAIN, TAG, `update rows: ${rows}`)
+        // hilog.info(DOMAIN, TAG, `account=${acc}, message=${newMsg}`)
+      })
+    }  else {
+      hilog.error(DOMAIN, TAG, 'upDateCollectionState myRDBStoreIns is undefined')
+    }
   }
 
   deleteMsg_row(acc: string/*, msg: string*/) {
@@ -85,6 +121,8 @@ export class UserMsgRDBStore {
         }
         hilog.info(DOMAIN, TAG, `Delete rows: ${rows}`)
       })
+    } else {
+      hilog.error(DOMAIN, TAG, 'deleteMsg_row myRDBStoreIns is undefined')
     }
   }
 
@@ -105,7 +143,7 @@ export class UserMsgRDBStore {
               const message = resultSet.getString(resultSet.getColumnIndex('MSG'));
               const index = resultSet.rowIndex
               resSet.unshift({ acc: account, msg: message })
-              hilog.info(DOMAIN, TAG, 'resT' + JSON.stringify(resSet[0]))
+              // hilog.info(DOMAIN, TAG, 'resT' + JSON.stringify(resSet[0]))
               // console.info(`account=${account}, age=${age}, message=${message}`);
               hilog.info(DOMAIN, TAG, `account=${account}, message=${message}, index=${index}`)
             }
@@ -127,8 +165,10 @@ export interface resSetType {
   msg: string
 }
 
-
-
-
-
-
+export interface myHistoryItemType {
+  ilanFrom: string
+  ilanTo: string
+  ititle: string
+  itext: string
+  iisCollection: boolean
+}

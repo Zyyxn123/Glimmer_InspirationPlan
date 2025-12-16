@@ -1,4 +1,5 @@
 import { ComponentsColor } from "utils"
+import { BasicDataViewModel } from "../ViewModel/BasicDataViewModel"
 
 interface basicInfosType {
   text: string
@@ -7,11 +8,11 @@ interface basicInfosType {
 
 @Component
 export struct BasicData {
+  private basicDataVM: BasicDataViewModel = BasicDataViewModel.Instance()
   @State basicInfos: basicInfosType[] = [
     { text: '赞赏值', nums: 4325 },// 打卡一个得到2分
-    { text: '收藏', nums: 10 },
+    { text: '收藏', nums: this.basicDataVM.itemLists.length - 1 },
     { text: '喜欢', nums: 7 },]// 喜欢的每日英语的词语或句子
-
   build() {
     Column() {
       /**

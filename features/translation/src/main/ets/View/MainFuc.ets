@@ -48,7 +48,7 @@ export struct MainFuc {
     if (!this.isUploading) {
       // 详细信息 - 单词/汉语词
       if (this.Index == 0) {
-        if (HTTPForEnglishWordToChinese.myData /*&&
+        if (HTTPForEnglishWordToChinese.myData && HTTPForEnglishWordToChinese.myData.code == '200' /*&&
           HTTPForEnglishWordToChinese.myData.data.word ==
             this.WordOrSentence[0].toLowerCase() + this.WordOrSentence.slice(1)*/) {
           Column({ space: 20 }) {
@@ -487,20 +487,22 @@ export struct MainFuc {
                 hilog.info(0x0000, '[publicMainFuncTag]', 'success1')
                 HTTPForEnglishWordToChinese.HTTPForEnglishWordToChinese(this.WordOrSentence.trim())
                 this.msg = HTTPForEnglishWordToChinese.myData
-                this.isShownTranslation = true
-                this.isOneWord = true
-                this.Index = 0
-                this.isUploading = true
+                if (/*this.msg!.code == '200'*/true) {
+                  this.isShownTranslation = true
+                  this.isOneWord = true
+                  this.Index = 0
+                  this.isUploading = true
 
-                this.intervalId_two = setInterval(() => {
-                  if (HTTPForEnglishWordToChinese.myData) {
-                    this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
-                      JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
-                    this.isUploading = false
-                    clearInterval(this.intervalId_two)
-                    this.intervalId_two = null
-                  }
-                }, 600)
+                  this.intervalId_two = setInterval(() => {
+                    if (HTTPForEnglishWordToChinese.myData && HTTPForEnglishWordToChinese.myData.code == '200') {
+                      this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
+                        JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
+                      this.isUploading = false
+                      clearInterval(this.intervalId_two)
+                      this.intervalId_two = null
+                    }
+                  }, 600)
+                }
               }
               // 英语句子
               else if (this.lanFrom == 'en' && this.WordOrSentence.split(' ').length !== 1) {
@@ -546,7 +548,7 @@ export struct MainFuc {
                       this.isUploading = true
 
                       this.intervalId_three = setInterval(() => {
-                        if (HTTPForEnglishWordToChinese.myData) {
+                        if (HTTPForEnglishWordToChinese.myData && HTTPForEnglishWordToChinese.myData.code == '200') {
                           this.myHistoryVM.putMsgItem(this.lanFrom, this.lanTo, this.WordOrSentence,
                             JSON.stringify(HTTPForEnglishWordToChinese.myData), false)
                           hilog.info(0x0000, '[publicTranslationTag]', JSON.stringify(HTTPForEnglishWordToChinese.myData))

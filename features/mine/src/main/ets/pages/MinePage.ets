@@ -10,6 +10,7 @@ import { PhotoAvatar } from '../View/PhotoAvatar';
 import { CPAViewModel } from '../ViewModel/CPAViewModel';
 import { ChangeBasicData } from '../View/ChangeBasicData';
 import { MyCollection } from '../View/MyCollection';
+import { BasicDataViewModel } from '../ViewModel/BasicDataViewModel';
 
 // import { CommonCharts } from 'module_line_chart';
 
@@ -17,11 +18,16 @@ import { MyCollection } from '../View/MyCollection';
 export struct MinePage {
   @StorageLink('PageInfos') pageStack: NavPathStack = new NavPathStack();
   @Provide('mine_pageStack') pageInfos: NavPathStack = new NavPathStack()
+  private basicDataViewModel: BasicDataViewModel = BasicDataViewModel.Instance()
 
   aboutToAppear(): void {
     if (CPAViewModel.Instance().pa.length == 0) {
       CPAViewModel.Instance().init()
     }
+    this.basicDataViewModel.getAllCollectionMsg()
+  }
+  onPageShow(): void {
+
   }
 
   @Builder

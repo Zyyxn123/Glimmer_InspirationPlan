@@ -7,15 +7,7 @@ const TAG: string = '[myHistoryViewModelTag]'
 
 @ObservedV2
 export class myHistoryViewModel {
-  @Trace itemLists: myHistoryItemType[] = [
-    {
-      ilanFrom: 'k',
-      ilanTo: 'k',
-      ititle: '示例',
-      itext: 'example',
-      iisCollection: false
-    }
-  ]
+  @Trace itemLists: myHistoryItemType[] = []
   private static myHisVM: myHistoryViewModel | undefined = undefined
   private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
   private inputMsg: myHistoryItemType | undefined = undefined
@@ -41,6 +33,24 @@ export class myHistoryViewModel {
       this.itemLists.push(item)
       console.log('列表值: ', this.itemLists[i].itext)
     }
+    this.itemLists.push({
+      ilanFrom: 'k',
+      ilanTo: 'k',
+      ititle: '示例',
+      itext: 'example',
+      iisCollection: false
+    })
+  }
+
+  upDateCollectionState(item: myHistoryItemType) {
+    console.log(TAG + 'item: ', JSON.stringify(item.iisCollection))
+    // let tmp = item
+    // tmp.iisCollection = !tmp.iisCollection
+    this.inputMsg = item
+    // this.inputMsg.iisCollection = bool
+    console.log(TAG + 'inputMsg: ', JSON.stringify(this.inputMsg.iisCollection))
+    console.log(TAG + 'item: ', JSON.stringify(item.iisCollection))
+    this.userMsgRDBStore.upDateCollectionState(this.curACCount, JSON.stringify(item)/*, JSON.stringify(this.inputMsg)*/)
   }
 
   putMsgItem(lanFrom: string, lanTo: string, title: string, text: string, isCollection: boolean) {
