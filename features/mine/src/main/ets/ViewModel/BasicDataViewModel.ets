@@ -41,10 +41,10 @@ export class BasicDataViewModel {
       let itemStr = msg[i].msg
       console.log(TAG, itemStr)
       let item = JSON.parse(itemStr) as myBasicDataItemType
-      console.log('列表值没有的和有的收藏: ', this.itemLists[i].itext)
-      if (item.iisCollection) {
+      console.log('列表值没有的和有的收藏: ', this.itemLists[i]?.itext)
+      if (item?.iisCollection) {
         this.itemLists.push(item)
-        console.log('列表值收藏: ', this.itemLists[i].itext)
+        console.log('列表值收藏: ', this.itemLists[i]?.itext)
       }
     }
   }
