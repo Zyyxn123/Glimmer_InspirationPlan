@@ -1,9 +1,15 @@
 import { QuickStart } from 'quickstart'
-import { ComponentsSize, ComponentsColor } from 'utils'
+import { ComponentsSize, ComponentsColor, LogOrRegPreference } from 'utils'
 
 @Entry
 @Component
 struct Index {
+  private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+
+  aboutToAppear(): void {
+    AppStorage.setOrCreate('curAccount', this.logOrRegPreference.getCurAcc())
+  }
+
   build() {
     Column() {
       QuickStart()

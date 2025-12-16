@@ -9,7 +9,7 @@ const TAG: string = '[UserBasicMsgPreference]'
 const DOMAIN: number = 0x0000
 const ph: string = 'ph'
 const userName: string = 'userName'
-const acc: string = AppStorage.get('curAccount')!
+// const acc: string = AppStorage.get('curAccount')!
 const psw: string = 'psw'
 const sign: string = 'sign'
 
@@ -45,7 +45,7 @@ export class UserBasicMsgPreference {
       return false
     }
     try {
-      let bol = this.myPreference.hasSync(acc + ph)
+      let bol = this.myPreference.hasSync(AppStorage.get('curAccount') + ph)
       return bol
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference isHasPh check failed')
@@ -59,7 +59,7 @@ export class UserBasicMsgPreference {
       return false
     }
     try {
-      let bol = this.myPreference.hasSync(acc + userName)
+      let bol = this.myPreference.hasSync(AppStorage.get('curAccount') + userName)
       return bol
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference isHasUserName check failed')
@@ -73,7 +73,7 @@ export class UserBasicMsgPreference {
       return false
     }
     try {
-      let bol = this.myPreference.hasSync(acc + sign)
+      let bol = this.myPreference.hasSync(AppStorage.get('curAccount') + sign)
       return bol
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference isHasSignature check failed')
@@ -87,8 +87,10 @@ export class UserBasicMsgPreference {
       return 'app.media.avatar_1th'
     }
     try {
-      let strPh: string = this.myPreference.getSync(acc + ph, 'app.media.avatar_1th') as string
-      hilog.info(DOMAIN, TAG, 'myPreference getPh: ' + strPh)
+      let strPh: string = this.myPreference.getSync(AppStorage.get('curAccount') + ph, '') as string
+      console.log('选择的图片uri是getPh：' + strPh)
+      hilog.info(DOMAIN, TAG, 'myPreference[' + AppStorage.get('curAccount') + userName + ']getPh: ' + strPh)
+      hilog.info(DOMAIN, TAG, 'myPreference[' + AppStorage.get('curAccount') + userName + ']getAcc: ' + AppStorage.get('curAccount'))
       return strPh
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference getPh failed')
@@ -102,8 +104,8 @@ export class UserBasicMsgPreference {
       return '默认用户名'
     }
     try {
-      let strUserName: string = this.myPreference.getSync(acc + userName, '默认用户名') as string
-      hilog.info(DOMAIN, TAG, 'myPreference getUserName: ' + strUserName)
+      let strUserName: string = this.myPreference.getSync(AppStorage.get('curAccount') + userName, '默认用户名') as string
+      hilog.info(DOMAIN, TAG, 'myPreference[' + AppStorage.get('curAccount') + userName + ']getUserName: ' + strUserName)
       return strUserName
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference getUserName failed')
@@ -117,8 +119,8 @@ export class UserBasicMsgPreference {
       return '该用户还未设置签名'
     }
     try {
-      let strSignature: string = this.myPreference.getSync(acc + sign, '该用户还未设置签名') as string
-      hilog.info(DOMAIN, TAG, 'myPreference getSignature: ' + strSignature)
+      let strSignature: string = this.myPreference.getSync(AppStorage.get('curAccount') + sign, '该用户还未设置签名') as string
+      hilog.info(DOMAIN, TAG, 'myPreference[' + AppStorage.get('curAccount') + userName + ']getSignature: ' + strSignature)
       return strSignature
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference getSignature failed')
@@ -150,7 +152,9 @@ export class UserBasicMsgPreference {
       return
     }
     try {
-      this.myPreference.putSync(acc + ph, uri)
+      this.myPreference.putSync(AppStorage.get('curAccount') + ph, uri)
+      console.log('选择的图片uri是putSync：' + uri)
+      hilog.info(DOMAIN, TAG, 'myPreference[' + AppStorage.get('curAccount') + ph + ']getSignature: ' + uri)
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'setPh flush failed')
@@ -168,7 +172,7 @@ export class UserBasicMsgPreference {
       return
     }
     try {
-      this.myPreference.putSync(acc + userName, name)
+      this.myPreference.putSync(AppStorage.get('curAccount') + userName, name)
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'setUserName flush failed')
@@ -186,7 +190,7 @@ export class UserBasicMsgPreference {
       return
     }
     try {
-      this.myPreference.putSync(acc + sign, signs)
+      this.myPreference.putSync(AppStorage.get('curAccount') + sign, signs)
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'setSignature flush failed')

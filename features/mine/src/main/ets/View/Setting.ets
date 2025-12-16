@@ -1,4 +1,4 @@
-import { ComponentsColor, LogOrRegPreference } from "utils"
+import { ComponentsColor, LogOrRegPreference, UserBasicMsgPreference } from "utils"
 import { dataType } from "../Model/SettingModel"
 import { CPAViewModel } from "../ViewModel/CPAViewModel"
 import { SettingViewModel } from "../ViewModel/SettingViewModel"
@@ -19,6 +19,7 @@ export struct Setting {
   @StorageProp('topRectHeight') topRectHeight: number = 0;
   private settingVM: SettingViewModel = SettingViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
   private context: Context = this.getUIContext().getHostContext() as Context
 
   aboutToAppear(): void {
@@ -156,6 +157,9 @@ export struct Setting {
                         AppStorage.set('TabsBarHeight_changeToCamera', false)
                         AppStorage.set('LoginState', false)
 
+                        this.userBasicMsgPreference.setPh('app.media.avatar_1th')
+                        this.userBasicMsgPreference.setUserName('默认用户名')
+                        this.userBasicMsgPreference.setSignature('该用户还未设置签名')
                         this.logOrRegPreference.setLoginState(false)
                         this.logOrRegPreference.setCurAcc('')
                       }

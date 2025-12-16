@@ -14,15 +14,18 @@ export struct ChangeBasicData {
   private settingViewModel: SettingViewModel = SettingViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
 
-  private selFucToStore() {
+  private selFucToStore(msg: string) {
+    console.log('要修改的密码是selFucToStore：' + msg)
     if (this.para!.title == '用户名') {
-      this.userBasicMsgPreference.setUserName(this.modMsg)
+      console.log('要修改的用户名是：' + msg)
+      this.userBasicMsgPreference.setUserName(msg)
       this.settingViewModel.setUserName()
     } else if (this.para!.title == '个性签名') {
-      this.userBasicMsgPreference.setSignature(this.modMsg)
+      this.userBasicMsgPreference.setSignature(msg)
       this.settingViewModel.setSignature()
-    } else if (this.para!.text == '密码') {
-      this.logOrRegPreference.registerAcc(AppStorage.get('curAccount')!, this.modMsg)
+    } else if (this.para!.title == '密码') {
+      console.log('要修改的密码是：' + msg)
+      this.logOrRegPreference.registerAcc(AppStorage.get('curAccount')!, msg)
       this.settingViewModel.setPsw()
     }
   }
@@ -61,7 +64,8 @@ export struct ChangeBasicData {
           .height(40)
           .onClick(() => {
             if (this.modMsg) {
-              this.selFucToStore()
+              console.log('要修改的密码是Button：' + this.modMsg)
+              this.selFucToStore(this.modMsg)
               this.modMsg = ''
               this.para = { title: 'title', text: 'text', limit: 'limit' }
               this.pageInfos.pop()
@@ -83,6 +87,7 @@ export struct ChangeBasicData {
       this.pageInfos = context.pathStack;
       this.para = context.pathInfo.param as paramsType
       this.modMsg = this.para!.text
+      console.log('要修改的密码是onReady：' + JSON.stringify(this.para))
     })
     .onBackPressed(() => {
       this.modMsg = ''

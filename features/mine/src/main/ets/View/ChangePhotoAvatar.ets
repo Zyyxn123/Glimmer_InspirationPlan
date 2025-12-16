@@ -1,6 +1,7 @@
 import { UserBasicMsgPreference } from "utils";
 import { CPAViewModel } from "../ViewModel/CPAViewModel"
 import { SettingViewModel } from "../ViewModel/SettingViewModel";
+import { hilog } from "@kit.PerformanceAnalysisKit";
 
 @Component
 export struct ChangePhotoAvatar {
@@ -46,6 +47,7 @@ export struct ChangePhotoAvatar {
           .height('8%')
           .onClick(() => {
             if (this.curSelPh) {
+              console.log('选择的图片uri是Button：' + this.curSelPh)
               this.userBasicMsgPreference.setPh(this.curSelPh)
               this.cpaVM.getCurPh()
               this.settingViewModel.setPh()

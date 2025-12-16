@@ -65,6 +65,8 @@ export class SettingViewModel {
     if (AppStorage.get('curAccount') !== undefined) {
       this.dataList[3].text = this.logOrRegPreference.getPsw(AppStorage.get('curAccount')!)
       this.password = this.logOrRegPreference.getPsw(AppStorage.get('curAccount')!)
+
+      console.log('要修改的密码是setPsw：' + this.password)
     }
   }
 

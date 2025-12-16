@@ -1,10 +1,9 @@
-import { UserMsgRDBStore } from 'utils';
+import { LogOrRegPreference, UserMsgRDBStore } from 'utils';
 import { LoginPage } from './LoginPage'
 import { MainPage } from './MainPage';
 import { common } from '@kit.AbilityKit';
 
 AppStorage.setOrCreate('LoginState', false)
-AppStorage.setOrCreate('curAccount', '')
 
 @Component
 export struct QuickStart {
@@ -14,9 +13,12 @@ export struct QuickStart {
   @StorageLink('PageInfos') pageInfo: NavPathStack = new NavPathStack();
   private userMsgRDBStore: UserMsgRDBStore = UserMsgRDBStore.Instance()
   private context: common.Context = this.getUIContext().getHostContext() as common.Context
+  private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
 
   aboutToAppear(): void {
     this.userMsgRDBStore.getInit(this.context)
+
+    AppStorage.set('curAccount', this.logOrRegPreference.getCurAcc())
   }
 
   build() {

@@ -74,7 +74,7 @@ export class LogOrRegPreference {
       return
     }
     try {
-      let bol = this.myPreference.putSync('curAccount', acc)
+      this.myPreference.putSync('curAccount', acc)
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'myPreference setCurAcc flush failed')
@@ -89,15 +89,15 @@ export class LogOrRegPreference {
   getCurAcc() {
     if (!this.myPreference) {
       hilog.info(DOMAIN, TAG, 'myPreference create failed')
-      return ''
+      return 'default'
     }
     try {
-      let strAcc: string = this.myPreference.getSync('curAccount', '') as string
+      let strAcc: string = this.myPreference.getSync('curAccount', 'default') as string
       hilog.info(DOMAIN, TAG, 'myPreference getCurAcc: ' + strAcc)
       return strAcc
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference getCurAcc check failed')
-      return ''
+      return 'default'
     }
   }
 
@@ -137,6 +137,7 @@ export class LogOrRegPreference {
     }
     try {
       this.myPreference.putSync(account, password)
+      console.log('要修改的密码是registerAcc：' + account + ';' + password)
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'myPreference registerAcc flush failed')
