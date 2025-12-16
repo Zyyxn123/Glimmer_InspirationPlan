@@ -5,7 +5,7 @@ export struct FunctionSet {
   @Consume('mine_pageStack') pageInfos: NavPathStack
   @State functionSets: functionSetsType[] = [
     { title: '我的收藏', img: ComponentsPictures.ICON_FUNCTION_COLLECTION, url: 'myCollection' },
-    { title: '每日英语', img: ComponentsPictures.ICON_FUNCTION_STUDY, margin: 12, url: '' }, //对应赞赏值
+    { title: '每日英语', img: ComponentsPictures.ICON_FUNCTION_STUDY, margin: 12, url: 'dailyEnglish' }, //对应赞赏值
     { title: '学习经历', img: ComponentsPictures.ICON_FUNCTION_MEDAL, url: '' },
   ]
 
@@ -25,6 +25,7 @@ export struct FunctionSet {
         .height(150)
         .justifyContent(FlexAlign.Center)
         .onClick(() => {
+          AppStorage.set('TabsBarHeight_changeToCamera', true)
           this.pageInfos.pushPath({ name: item.url})
         })
       })

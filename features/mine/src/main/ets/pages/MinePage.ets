@@ -11,6 +11,8 @@ import { CPAViewModel } from '../ViewModel/CPAViewModel';
 import { ChangeBasicData } from '../View/ChangeBasicData';
 import { MyCollection } from '../View/MyCollection';
 import { BasicDataViewModel } from '../ViewModel/BasicDataViewModel';
+import { DailyEnglish } from '../View/DailyEnglish';
+import { HTTPForDailyEnglish, httpRequestForDailyEnglishType } from '../utils/HTTPForDailyEnglish';
 
 // import { CommonCharts } from 'module_line_chart';
 
@@ -19,12 +21,16 @@ export struct MinePage {
   @StorageLink('PageInfos') pageStack: NavPathStack = new NavPathStack();
   @Provide('mine_pageStack') pageInfos: NavPathStack = new NavPathStack()
   private basicDataViewModel: BasicDataViewModel = BasicDataViewModel.Instance()
-
+  // private httpForDailyEnglish: HTTPForDailyEnglish = new HTTPForDailyEnglish()
+  // @Provide('DailyEnglish') DE: httpRequestForDailyEnglishType | undefined = undefined
   aboutToAppear(): void {
     if (CPAViewModel.Instance().pa.length == 0) {
       CPAViewModel.Instance().init()
     }
     this.basicDataViewModel.getAllCollectionMsg()
+
+    // this.httpForDailyEnglish.httpRequestForDailyEnglish()
+    // this.DE = this.httpForDailyEnglish.DE
   }
   onPageShow(): void {
 
@@ -40,6 +46,8 @@ export struct MinePage {
       ChangeBasicData()
     } else if (name === 'myCollection') {
       MyCollection()
+    } else if (name === 'dailyEnglish') {
+      DailyEnglish()
     }
   }
 

@@ -31,5 +31,9 @@ export struct MyCollection {
     .padding({
       top: this.getUIContext().px2vp(this.topRectHeight),
     })
+    .onBackPressed(() => {
+      AppStorage.set('TabsBarHeight_changeToCamera', false)
+      return false
+    })
   }
 }

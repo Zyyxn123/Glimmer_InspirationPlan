@@ -23,7 +23,7 @@ export struct NameAndSign {
         .height(25)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis})
-        .padding({ left: 5, right: 5})
+        .padding({ left: 15, right: 5})
     }
     .margin({ left: 15, top: 15})
   }
