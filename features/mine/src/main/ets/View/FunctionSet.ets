@@ -6,7 +6,7 @@ export struct FunctionSet {
   @State functionSets: functionSetsType[] = [
     { title: '我的收藏', img: ComponentsPictures.ICON_FUNCTION_COLLECTION, url: 'myCollection' },
     { title: '每日英语', img: ComponentsPictures.ICON_FUNCTION_STUDY, margin: 12, url: 'dailyEnglish' }, //对应赞赏值
-    { title: '学习经历', img: ComponentsPictures.ICON_FUNCTION_MEDAL, url: '' },
+    // { title: '学习经历', img: ComponentsPictures.ICON_FUNCTION_MEDAL, url: '' },
   ]
 
   build() {
