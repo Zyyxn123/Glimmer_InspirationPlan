@@ -1,12 +1,23 @@
-import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
+import { ComponentsSize, ComponentsColor, ComponentsPictures, LogOrRegPreference } from 'utils'
+import { hilog } from '@kit.PerformanceAnalysisKit'
 
 @Component
 export struct BasicCard {
+  private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
+  @State msg: string = ''
   @State basicCardsMsg: basicCardsMsgType[] =
-    [{ title: '签到天数', text: 2 },
+    [{ title: '签到天数', text: (AppStorage.get('curAccSignInDateCount')! as string).split(' ')[0] },
       { title: '累计学习', text: AppStorage.get('totalStudyNum')! }, // 每日英语打卡总共次数
       { title: '累计查询', text: AppStorage.get('totalSearchNum')! },
-      { title: '坚持天数', text: 2 },]
+      { title: '坚持天数', text: (AppStorage.get('curAccSignInDateCount')! as string).split(' ')[1] },]
+
+  aboutToAppear(): void {
+    this.logOrRegPreference.initPre(this.getUIContext().getHostContext() as Context)
+    this.msg = this.logOrRegPreference.getCurAccSignInDateCount()
+    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays this.msg: ' + this.msg)
+    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays this.msg: ' + this.msg.split(' ')[0])
+    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays this.msg: ' + this.msg.split(' ')[1])
+  }
 
   build() {
     Row() {
@@ -37,6 +48,6 @@ export struct BasicCard {
 }
 
 interface basicCardsMsgType {
-  text: number
+  text: string | number
   title: string
 }

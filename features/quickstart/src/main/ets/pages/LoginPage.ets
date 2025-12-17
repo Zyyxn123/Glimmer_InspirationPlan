@@ -9,11 +9,36 @@ import {
 import { promptAction } from '@kit.ArkUI';
 import { SettingViewModel } from 'mine';
 import { CPAViewModel } from 'mine/src/main/ets/ViewModel/CPAViewModel';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 
 @Builder
 export function LoginPageBuilder() {
   LoginPage();
+}
+
+let date = new Date()
+// 判断两个日期是否连续（相差1天）
+function isConsecutiveDays(lastDateStr: string, currentDateStr: string): number {
+  hilog.info(0x0000, '[publicIndexTag]', 'lastDateStr: ' + lastDateStr)
+  hilog.info(0x0000, '[publicIndexTag]', 'currentDateStr: ' + currentDateStr)
+  // 解析日期字符串
+  const lastDate = new Date(lastDateStr)
+  const currentDate = new Date(currentDateStr)
+  hilog.info(0x0000, '[publicIndexTag]', 'lastDate: ' + lastDate.toString())
+  hilog.info(0x0000, '[publicIndexTag]', 'currentDate: ' + currentDate.toString())
+  // 验证日期是否有效
+  if (isNaN(lastDate.getTime()) || isNaN(currentDate.getTime())) {
+    throw new Error('日期格式无效，请使用 YYYY-MM-DD 格式')
+  }
+
+  // 计算日期差（单位：天）
+  const timeDiff = currentDate.getTime() - lastDate.getTime()
+  const dayDiff = timeDiff / (1000 * 3600 * 24)
+  hilog.info(0x0000, '[publicIndexTag]', 'timeDiff: ' + timeDiff.toString())
+  hilog.info(0x0000, '[publicIndexTag]', 'dayDiff: ' + dayDiff.toString())
+  // 相差1天为连续
+  return dayDiff
 }
 
 
@@ -103,6 +128,43 @@ export struct LoginPage {
         AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
         AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
         AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
+
+
+        let str: string[] = this.logOrRegPreference.getCurAccSignInDateCount().split(' ')
+        let fir: number = 0
+        let sec: number = 0
+        if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+          date.toISOString().split('T')[0].toString()) === 1) {
+          hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'success')
+          fir = parseInt(str[0]) + 1
+          sec = parseInt(str[1]) + 1
+          str = [fir + '','' + sec]
+          this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+          this.logOrRegPreference.setIsFirstSignState(false)
+        } else if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+          date.toISOString().split('T')[0].toString()) === 0) {
+          // 同一天
+          hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed')
+          hilog.info(0x0000, '[publicIndexTagaaaa]', 'getIsFirstSignToday: ' + this.logOrRegPreference.getIsFirstSignToday())
+          if (this.logOrRegPreference.getIsFirstSignToday()) {
+            // 签到
+            fir = parseInt(str[0]) + 1
+            sec = parseInt(str[1]) + 1
+            str = [fir + '','' + sec]
+            this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+            hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed: ' + fir + ' ' + sec)
+            this.logOrRegPreference.setIsFirstSignState(false)
+          }
+        } else {
+          hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failedaaaa')
+          // 签到
+          fir = parseInt(str[0]) + 1
+          sec = 1
+          str = [fir + '','' + sec]
+          this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+          this.logOrRegPreference.setIsFirstSignState(false)
+        }
+        AppStorage.set('curAccSignInDateCount', str.join(' '))
 
         this.isAbleToButton = true
         AppStorage.set('LoginState', true)
@@ -233,6 +295,41 @@ export struct LoginPage {
                   AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
                   AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
                   AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
+                  let str: string[] = this.logOrRegPreference.getCurAccSignInDateCount().split(' ')
+                  let fir: number = 0
+                  let sec: number = 0
+                  if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+                    date.toISOString().split('T')[0].toString()) === 1) {
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'success')
+                    fir = parseInt(str[0]) + 1
+                    sec = parseInt(str[1]) + 1
+                    str = [fir + '','' + sec]
+                    this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                    this.logOrRegPreference.setIsFirstSignState(false)
+                  } else if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+                    date.toISOString().split('T')[0].toString()) === 0) {
+                    // 同一天
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed')
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'getIsFirstSignToday: ' + this.logOrRegPreference.getIsFirstSignToday())
+                    if (this.logOrRegPreference.getIsFirstSignToday()) {
+                      // 签到
+                      fir = parseInt(str[0]) + 1
+                      sec = parseInt(str[1]) + 1
+                      str = [fir + '','' + sec]
+                      this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                      hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed: ' + fir + ' ' + sec)
+                      this.logOrRegPreference.setIsFirstSignState(false)
+                    }
+                  } else {
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failedaaaa')
+                    // 签到
+                    fir = parseInt(str[0]) + 1
+                    sec = 1
+                    str = [fir + '','' + sec]
+                    this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                    this.logOrRegPreference.setIsFirstSignState(false)
+                  }
+                  AppStorage.set('curAccSignInDateCount', str.join(' '))
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {
@@ -313,6 +410,41 @@ export struct LoginPage {
                   AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
                   AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
                   AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
+                  let str: string[] = this.logOrRegPreference.getCurAccSignInDateCount().split(' ')
+                  let fir: number = 0
+                  let sec: number = 0
+                  if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+                    date.toISOString().split('T')[0].toString()) === 1) {
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'success')
+                    fir = parseInt(str[0]) + 1
+                    sec = parseInt(str[1]) + 1
+                    str = [fir + '','' + sec]
+                    this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                    this.logOrRegPreference.setIsFirstSignState(false)
+                  } else if (isConsecutiveDays(this.logOrRegPreference.getCurAccDate(),
+                    date.toISOString().split('T')[0].toString()) === 0) {
+                    // 同一天
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed')
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'getIsFirstSignToday: ' + this.logOrRegPreference.getIsFirstSignToday())
+                    if (this.logOrRegPreference.getIsFirstSignToday()) {
+                      // 签到
+                      fir = parseInt(str[0]) + 1
+                      sec = parseInt(str[1]) + 1
+                      str = [fir + '','' + sec]
+                      this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                      hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failed: ' + fir + ' ' + sec)
+                      this.logOrRegPreference.setIsFirstSignState(false)
+                    }
+                  } else {
+                    hilog.info(0x0000, '[publicIndexTagaaaa]', 'isConsecutiveDays: ' + 'failedaaaa')
+                    // 签到
+                    fir = parseInt(str[0]) + 1
+                    sec = 1
+                    str = [fir + '','' + sec]
+                    this.logOrRegPreference.setCurAccSignInDateCount(fir + ' ' + sec)
+                    this.logOrRegPreference.setIsFirstSignState(false)
+                  }
+                  AppStorage.set('curAccSignInDateCount', str.join(' '))
 
                   this.isShown_sea = true
                   this.intervalId = setInterval(() => {

@@ -176,6 +176,10 @@ export class LogOrRegPreference {
       this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalSearchNum')
       this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalStudyNum')
       this.myPreference.deleteSync(AppStorage.get('curAccount') + 'totalLivenessPer')
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'curDate')
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'curAccSignInDateCount')
+      this.myPreference.deleteSync(AppStorage.get('curAccount') + 'IsFirstSignToday')
+      // this.myPreference.deleteSync(AppStorage.get('curAccount') + 'curDate')
       this.myPreference.flush((err) => {
         if (err) {
           hilog.error(DOMAIN, TAG, 'myPreference deleteMsg flush failed')
@@ -283,6 +287,111 @@ export class LogOrRegPreference {
     } catch (error) {
       hilog.error(DOMAIN, TAG, 'myPreference account check failed')
       return 0
+    }
+  }
+
+  setCurAccDate() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      let date = new Date()
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'curDate', date.toISOString().split('T')[0].toString())
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAccDate flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAccDate flush successfully: ' + date.toISOString().split('T')[0].toString())
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAccDate putSync failed')
+    }
+  }
+
+  getCurAccDate() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return '2025-12-17'
+    }
+    try {
+      let strPsw: string = this.myPreference.getSync(AppStorage.get('curAccount') + 'curDate', '2025-12-17') as string
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAccDate: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference getCurAccDate check failed')
+      return '2025-12-17'
+    }
+  }
+
+  /**
+   * return '0 0':
+   *  first zero: sign in total counts
+   *  second zero: sign in consistent days counts
+   * */
+  getCurAccSignInDateCount() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return '0 0'
+    }
+    try {
+      let strPsw: string = this.myPreference.getSync(AppStorage.get('curAccount') + 'curAccSignInDateCount', '0 0') as string
+      hilog.info(DOMAIN, TAG, 'myPreference getCurAccSignInDateCount: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference getCurAccSignInDateCount check failed')
+      return '0 0'
+    }
+  }
+
+  setCurAccSignInDateCount(str: string) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'curAccSignInDateCount', str)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setCurAccSignInDateCount flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setCurAccSignInDateCount flush successfully: ' + str)
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setCurAccSignInDateCount putSync failed')
+    }
+  }
+
+  getIsFirstSignToday() {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return true
+    }
+    try {
+      let strPsw: boolean = this.myPreference.getSync(AppStorage.get('curAccount') + 'IsFirstSignToday', true) as boolean
+      hilog.info(DOMAIN, TAG, 'myPreference getIsFirstSignToday: ' + strPsw)
+      return strPsw
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference getIsFirstSignToday check failed')
+      return true
+    }
+  }
+
+  setIsFirstSignState(bool: boolean) {
+    if (!this.myPreference) {
+      hilog.info(DOMAIN, TAG, 'myPreference create failed')
+      return
+    }
+    try {
+      this.myPreference.putSync(AppStorage.get('curAccount') + 'IsFirstSignToday', bool)
+      this.myPreference.flush((err) => {
+        if (err) {
+          hilog.error(DOMAIN, TAG, 'myPreference setIsFirstSignState flush failed')
+        }
+        hilog.info(DOMAIN, TAG, 'myPreference setIsFirstSignState flush successfully: ' + bool)
+      })
+    } catch (error) {
+      hilog.error(DOMAIN, TAG, 'myPreference setIsFirstSignState putSync failed')
     }
   }
 

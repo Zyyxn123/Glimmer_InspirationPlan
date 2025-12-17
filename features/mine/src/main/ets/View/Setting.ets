@@ -172,7 +172,6 @@ export struct Setting {
                     }],
                 }
               )
-
             })
 
           Button('退出登录')
