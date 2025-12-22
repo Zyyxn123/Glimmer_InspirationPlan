@@ -18,7 +18,7 @@ export class HTTPForDailyEnglish {
       console.info('header: ' + JSON.stringify(header))
     });
     httpRequest.request(
-      POETRY_URL + '?key=xxxxxxxxxxxxxxx' +
+      POETRY_URL + '?key=ZXOFGo2yJ7f5RDhwMwIRzN0nnA' +
         '&time=today',
       {
         method: http.RequestMethod.GET,
