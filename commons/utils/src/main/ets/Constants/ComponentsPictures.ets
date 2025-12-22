@@ -1,7 +1,7 @@
 export class ComponentsPictures {
-  static AVATAR_FIRST: ResourceStr = $r('app.media.avatar_1st')
-  static AVATAR_SECOND: ResourceStr = $r('app.media.avatar_2nd')
-  static AVATAR_THIRD: ResourceStr = $r('app.media.avatar_3rd')
+  static AVATAR_FIRST: ResourceStr = $r('app.media.avatar_1th')
+  static AVATAR_SECOND: ResourceStr = $r('app.media.avatar_2th')
+  static AVATAR_THIRD: ResourceStr = $r('app.media.avatar_3th')
   static AVATAR_FOURTH: ResourceStr = $r('app.media.avatar_4th')
   static AVATAR_FIFTH: ResourceStr = $r('app.media.avatar_5th')
   static AVATAR_SIXTH: ResourceStr = $r('app.media.avatar_6th')
@@ -27,4 +27,10 @@ export class ComponentsPictures {
   static ICON_FUNCTION_PERSONALITY: ResourceStr = $r('app.media.icon_functionItem_personality')
   static ICON_LANGUAGE_TRANSFORM: ResourceStr = $r('app.media.icon_language_transform')
   static ICON_SEARCH_FANGFAJING: ResourceStr = $r('app.media.icon_search_fangdajing')
+  static ICON_PHONE_SOUND: ResourceStr = $r('app.media.icon_phone_sound')
+  static ICON_TRANSLATION_DELETE: ResourceStr = $r('app.media.shanchuyitiao')
+  static ICON_COLLECTION: ResourceStr = $r('app.media.ic_collection')
+  static ICON_COLLECTION_SELECTED: ResourceStr = $r('app.media.ic_collection_seled')
+  static ICON_LIKE: ResourceStr = $r('app.media.ic_like')
+  static ICON_LIKE_SELECTED: ResourceStr = $r('app.media.ic_like_seled')
 }

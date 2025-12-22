@@ -2,9 +2,10 @@ import { ComponentsSize, ComponentsColor, ComponentsPictures } from 'utils'
 
 @Component
 export struct FunctionItems {
+  @Consume('mine_pageStack') pageInfos: NavPathStack
   @State functionItems: functionItemsType[] = [
     { title: '设置', img: ComponentsPictures.ICON_FUNCTION_SETTING },
-    { title: '个人资料', img: ComponentsPictures.ICON_FUNCTION_PERSONALITY },
+    // { title: '个人资料', img: ComponentsPictures.ICON_FUNCTION_PERSONALITY },
   ]
 
   build() {
@@ -23,6 +24,10 @@ export struct FunctionItems {
           Text('>')
             .fontSize(20)
             .fontColor(ComponentsColor.AZURITE_DARK_1ST)
+            .onClick(() => {
+              AppStorage.set('TabsBarHeight_changeToCamera', true)
+              this.pageInfos.pushPath({ name: 'changeSetting'})
+            })
         }
         .width('100%')
         .padding(5)

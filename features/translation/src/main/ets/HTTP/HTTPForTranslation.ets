@@ -30,8 +30,9 @@ export class SpeechToSpeech {
     SpeechToSpeech.salt = SpeechToSpeech.generateSalt()
     SpeechToSpeech.curtime = Math.floor(Date.now() / 1000).toString()
     console.log(`当前的时间戳信息${SpeechToSpeech.curtime}`)
+    // TODO: please user your own API key
     const sign1 =
-      '279ce263ceeb4d2f' + input + SpeechToSpeech.salt + SpeechToSpeech.curtime + '8tujJX5JDigTJYkCgMpCpiItdfgVkoR1'
+      'xxxxxxxxxxxxxxxxx' + input + SpeechToSpeech.salt + SpeechToSpeech.curtime + 'xxxxxxxxxxxxxxxxxxxx'
 
     const md = cryptoFramework.createMd('SHA256');
     const data = new Uint8Array(buffer.from(sign1, 'utf-8').buffer);
@@ -55,6 +56,7 @@ export class SpeechToSpeech {
       let httpRequest = http.createHttp()
       httpRequest.request(
         YOUDAO_URL,
+        // TODO: please user your own API key
         { // zh-CHS
           method: http.RequestMethod.POST,
           header: {
@@ -65,7 +67,7 @@ export class SpeechToSpeech {
           'q=' + encodeURIComponent(text1) +
             '&from=auto' +
             '&to=en' +
-            '&appKey=279ce263ceeb4d2f' +
+            '&appKey=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx' +
             '&salt=' + SpeechToSpeech.salt +
             '&sign=' + SpeechToSpeech.sign +
             '&signType=v3' +

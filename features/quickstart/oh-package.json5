@@ -9,5 +9,6 @@
     "utils": "file:../../commons/utils",
     "mine": "file:../../features/mine",
     "translation": "file:../../features/translation",
+    "takephoto": "file:../../features/takephoto",
   }
 }

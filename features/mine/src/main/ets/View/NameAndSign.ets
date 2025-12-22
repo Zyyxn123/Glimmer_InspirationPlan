@@ -1,17 +1,21 @@
 import { ComponentsColor } from "utils"
+import { SettingViewModel } from "../ViewModel/SettingViewModel"
 
 @Component
 export struct NameAndSign {
-  @State userName: string = '默认用户名'
-  @State signature: string = '人生如逆旅，我亦是行客'
+  private settingVM: SettingViewModel = SettingViewModel.Instance()
 
   build() {
     Row({ space: 15 }) {
-      Text(this.userName)
-        .fontSize(this.userName.length < 5 ? 24 : 18)
+      Text(this.settingVM.userName)
+        .width(120)
+        .fontSize(this.settingVM.userName.length < 5 ? 24 : 18)
         .fontColor(ComponentsColor.AZURITE_DARK_6TH)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis})
 
-      Text(this.signature)
+      Text(this.settingVM.signature)
+        .width(120)
         .backgroundColor(ComponentsColor.AZURITE_BRIGHT_5TH)
         .fontColor(ComponentsColor.AZURITE_BRIGHT_1ST)
         .fontSize(10)
@@ -19,7 +23,7 @@ export struct NameAndSign {
         .height(25)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis})
-        .padding({ left: 5, right: 5})
+        .padding({ left: 15, right: 5})
     }
     .margin({ left: 15, top: 15})
   }

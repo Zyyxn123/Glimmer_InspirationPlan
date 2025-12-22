@@ -7,7 +7,7 @@
   "license": "",
   "dependencies": {
     "quickstart": "file:../../features/quickstart",
-    "utils": "file:../../commons/utils"
+    "utils": "file:../../commons/utils",
   }
 }
 

@@ -3,14 +3,30 @@
     "requestPermissions": [
       {
         "name": "ohos.permission.INTERNET"
+      },
+      // [StartExclude permissions_acc]
+      {
+        "name": "ohos.permission.CAMERA",
+        "reason": "$string:permission_CAMERA",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ]
+        }
+      },      {
+        "name": "ohos.permission.ACCELEROMETER" // 加速度传感器权限
       }
+      // [EndExclude permissions]
     ],
     "name": "entry",
     "type": "entry",
     "description": "$string:module_desc",
     "mainElement": "EntryAbility",
     "deviceTypes": [
-      "phone"
+      "phone",
+      "tablet",
+      "2in1",
+      "car",
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
@@ -20,9 +36,9 @@
         "name": "EntryAbility",
         "srcEntry": "./ets/entryability/EntryAbility.ets",
         "description": "$string:EntryAbility_desc",
-        "icon": "$media:layered_image",
+        "icon": "$media:icon_GlimmerApp",
         "label": "$string:EntryAbility_label",
-        "startWindowIcon": "$media:startIcon",
+        "startWindowIcon": "$media:icon_GlimmerApp",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
         "skills": [
