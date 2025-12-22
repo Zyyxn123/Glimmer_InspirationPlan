@@ -11,13 +11,14 @@ const POETRY_URL: string = 'https://api.t1qq.com/api/tool/daytry'
 export class HTTPForDailyEnglish {
   @Trace DE: httpRequestForDailyEnglishType | undefined = undefined
 
+  // TODO: please user your own API key
   httpRequestForDailyEnglish() {
     let httpRequest = http.createHttp()
     httpRequest.on('headersReceive', (header) => {
       console.info('header: ' + JSON.stringify(header))
     });
     httpRequest.request(
-      POETRY_URL + '?key=ZXOFGo2yJ7f5RDhwMwIRzN0nnA' +
+      POETRY_URL + '?key=xxxxxxxxxxxxxxx' +
         '&time=today',
       {
         method: http.RequestMethod.GET,
