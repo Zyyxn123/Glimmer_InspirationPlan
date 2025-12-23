@@ -10,6 +10,7 @@ import { promptAction } from '@kit.ArkUI';
 import { SettingViewModel } from 'mine';
 import { CPAViewModel } from 'mine/src/main/ets/ViewModel/CPAViewModel';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { myHistoryViewModel } from 'translation/src/main/ets/ViewModel/myHistoryViewModel';
 
 
 @Builder
@@ -56,6 +57,7 @@ export struct LoginPage {
   @State isAbleToButton: boolean = true
   private cpaVM: CPAViewModel = CPAViewModel.Instance()
   private settingVM: SettingViewModel = SettingViewModel.Instance()
+  private myHistoryVM: myHistoryViewModel = myHistoryViewModel.Instance()
   private logOrRegPreference: LogOrRegPreference = LogOrRegPreference.Instance()
   private userBasicMsgPreference: UserBasicMsgPreference = UserBasicMsgPreference.Instance()
   private context: Context = this.getUIContext().getHostContext() as Context
@@ -116,6 +118,7 @@ export struct LoginPage {
         AppStorage.set('LoginState', this.logOrRegPreference.getLoginState())
         this.myAccount = this.logOrRegPreference.getCurAcc()
         AppStorage.set('curAccount', this.myAccount)
+        this.userMsgRDBStore.queryMsg_row(this.myAccount)
         this.logOrRegPreference.setLoginState(true)
         this.logOrRegPreference.setCurAcc(this.myAccount)
         this.settingVM.setCurACC()
@@ -124,7 +127,7 @@ export struct LoginPage {
         this.settingVM.setUserName()
         this.settingVM.setSignature()
         this.cpaVM.getCurPh()
-        this.userMsgRDBStore.queryMsg_row(this.myAccount)
+        this.myHistoryVM.getAllHistoryMsg()
         AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
         AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
         AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)
@@ -285,13 +288,14 @@ export struct LoginPage {
                   AppStorage.set('curAccount', this.myAccount)
                   this.logOrRegPreference.setLoginState(true)
                   this.logOrRegPreference.setCurAcc(this.myAccount)
+                  this.userMsgRDBStore.queryMsg_row(this.myAccount)
                   this.settingVM.setCurACC()
                   this.settingVM.setPsw()
                   this.settingVM.setPh()
                   this.settingVM.setUserName()
                   this.settingVM.setSignature()
                   this.cpaVM.getCurPh()
-                  this.userMsgRDBStore.queryMsg_row(this.myAccount)
+                  this.myHistoryVM.getAllHistoryMsg()
                   AppStorage.set('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
                   AppStorage.set('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
                   AppStorage.set('totalLivenessPer', this.logOrRegPreference.getCurAccTotalLivenessPer() + 1)

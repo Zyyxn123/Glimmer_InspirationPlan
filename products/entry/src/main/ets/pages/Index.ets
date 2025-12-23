@@ -12,8 +12,8 @@ struct Index {
   aboutToAppear(): void {
     this.logOrRegPreference.initPre(this.getUIContext().getHostContext() as Context)
     this.logOrRegPreference.setCurAccDate()
-    AppStorage.setOrCreate('curAccSignInDateCount', this.logOrRegPreference.getCurAccSignInDateCount())
     AppStorage.setOrCreate('curAccount', this.logOrRegPreference.getCurAcc())
+    AppStorage.setOrCreate('curAccSignInDateCount', this.logOrRegPreference.getCurAccSignInDateCount())
     AppStorage.setOrCreate('totalSearchNum', this.logOrRegPreference.getCurAccTotalSearchNum())
     AppStorage.setOrCreate('totalStudyNum', this.logOrRegPreference.getCurAccTotalStudyNum())
     if (date.toISOString().split('T')[0].toString() !== this.logOrRegPreference.getCurAccDate()) {
