@@ -36,7 +36,11 @@ export class HTTPForZhToEn {
 
         let myData: httpForZhToEnType = JSON.parse(data.result.toString()) as httpForZhToEnType
         HTTPForZhToEn.myData = myData
-        HTTPForZhToEn.myData_tran = myData.data[0].translations[0].text
+        if (myData.data[0].translations[0].text !== undefined) {
+          HTTPForZhToEn.myData_tran = myData.data[0].translations[0].text
+        } else {
+          HTTPForZhToEn.myData_tran = '查询出错'
+        }
         httpRequest.destroy();
       } else {
         hilog.error(0x0000, '[publicMainFuncTag]', JSON.stringify(err))
